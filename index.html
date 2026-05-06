@@ -3,1462 +3,1626 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dåliga Nyheter – Fake News-spelet</title>
+<title>Dåliga Nyheter – Spela Fake News-spelet!</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --red: #c0392b;
-    --dark: #1a1a2e;
-    --darker: #0f0f1a;
-    --yellow: #f39c12;
-    --green: #27ae60;
-    --blue: #2980b9;
-    --light: #ecf0f1;
-    --gray: #7f8c8d;
-    --card: #16213e;
-    --border: #2d3561;
-  }
-
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    font-family: 'Georgia', serif;
-    background: var(--darker);
-    color: var(--light);
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-  }
-
-  /* ── TOP BAR ── */
-  #topbar {
-    background: var(--dark);
-    border-bottom: 2px solid var(--red);
-    padding: 10px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-  }
-
-  #topbar h1 {
-    font-size: 1.3rem;
-    color: var(--red);
-    letter-spacing: 2px;
-    text-transform: uppercase;
-  }
-
-  #stats {
-    display: flex;
-    gap: 24px;
-    align-items: center;
-  }
-
-  .stat-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 0.75rem;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .stat-value {
-    font-size: 1.2rem;
-    font-weight: bold;
-    color: var(--light);
-    font-family: monospace;
-  }
-
-  #cred-bar-wrap {
-    width: 120px;
-    height: 8px;
-    background: #333;
-    border-radius: 4px;
-    overflow: hidden;
-    margin-top: 4px;
-  }
-
-  #cred-bar {
-    height: 100%;
-    background: linear-gradient(90deg, var(--red), var(--yellow), var(--green));
-    background-size: 300%;
-    transition: width 0.5s ease;
-    border-radius: 4px;
-  }
-
-  /* ── BADGES BAR ── */
-  #badges-bar {
-    background: var(--dark);
-    padding: 8px 20px;
-    display: flex;
-    gap: 12px;
-    align-items: center;
-    border-bottom: 1px solid var(--border);
-    flex-wrap: wrap;
-  }
-
-  #badges-bar span {
-    font-size: 0.7rem;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-right: 4px;
-  }
-
-  .badge {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    border: 2px solid var(--border);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 1.1rem;
-    filter: grayscale(1) opacity(0.35);
-    transition: all 0.4s ease;
-    cursor: default;
-    position: relative;
-  }
-
-  .badge.earned {
-    filter: none;
-    border-color: var(--yellow);
-    box-shadow: 0 0 10px rgba(243,156,18,0.5);
-  }
-
-  .badge[title]:hover::after {
-    content: attr(title);
-    position: absolute;
-    bottom: 42px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--dark);
-    border: 1px solid var(--border);
-    color: var(--light);
-    font-size: 0.7rem;
-    white-space: nowrap;
-    padding: 4px 8px;
-    border-radius: 4px;
-    pointer-events: none;
-  }
-
-  /* ── MAIN CONTAINER ── */
-  #game-container {
-    flex: 1;
-    max-width: 780px;
-    width: 100%;
-    margin: 0 auto;
-    padding: 30px 20px;
-  }
-
-  /* ── SCREENS ── */
-  .screen { display: none; animation: fadeIn 0.4s ease; }
-  .screen.active { display: block; }
-
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(12px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ── CARD ── */
-  .card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 28px 32px;
-    margin-bottom: 20px;
-  }
-
-  .card h2 {
-    font-size: 1.5rem;
-    margin-bottom: 14px;
-    color: var(--yellow);
-  }
-
-  .card p {
-    line-height: 1.7;
-    color: #bdc3c7;
-    margin-bottom: 12px;
-    font-size: 0.95rem;
-  }
-
-  /* ── NEWSPAPER HEADLINE ── */
-  .newspaper {
-    background: #fff;
-    color: #111;
-    border-radius: 6px;
-    padding: 20px 24px;
-    margin: 16px 0;
-    font-family: 'Georgia', serif;
-    border-left: 5px solid var(--red);
-  }
-
-  .newspaper .paper-name {
-    font-size: 0.7rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    color: #666;
-    margin-bottom: 6px;
-  }
-
-  .newspaper .headline {
-    font-size: 1.2rem;
-    font-weight: bold;
-    line-height: 1.4;
-    color: #111;
-  }
-
-  .newspaper .sub {
-    font-size: 0.85rem;
-    color: #555;
-    margin-top: 6px;
-    font-style: italic;
-  }
-
-  /* ── CHOICES ── */
-  .choices {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 18px;
-  }
-
-  .choice-btn {
-    background: var(--dark);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 14px 18px;
-    color: var(--light);
-    font-family: 'Georgia', serif;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    cursor: pointer;
-    text-align: left;
-    transition: all 0.2s ease;
-  }
-
-  .choice-btn:hover {
-    border-color: var(--yellow);
-    background: #1e2a4a;
-    transform: translateX(3px);
-  }
-
-  .choice-btn.correct {
-    border-color: var(--green);
-    background: rgba(39,174,96,0.15);
-    animation: pulse-green 0.5s ease;
-  }
-
-  .choice-btn.wrong {
-    border-color: var(--red);
-    background: rgba(192,57,43,0.15);
-  }
-
-  .choice-btn.neutral {
-    border-color: var(--blue);
-    background: rgba(41,128,185,0.15);
-  }
-
-  @keyframes pulse-green {
-    0%   { transform: scale(1); }
-    50%  { transform: scale(1.01); }
-    100% { transform: scale(1); }
-  }
-
-  /* ── FEEDBACK BOX ── */
-  #feedback-box {
-    display: none;
-    background: var(--dark);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 20px 24px;
-    margin-top: 16px;
-    animation: fadeIn 0.3s ease;
-  }
-
-  #feedback-box.show { display: block; }
-
-  #feedback-box h3 {
-    font-size: 1rem;
-    margin-bottom: 8px;
-  }
-
-  #feedback-box p {
-    color: #bdc3c7;
-    font-size: 0.9rem;
-    line-height: 1.6;
-  }
-
-  .feedback-stats {
-    display: flex;
-    gap: 16px;
-    margin-top: 12px;
-    flex-wrap: wrap;
-  }
-
-  .fstat {
-    font-size: 0.8rem;
-    padding: 4px 10px;
-    border-radius: 20px;
-    font-weight: bold;
-  }
-
-  .fstat.pos { background: rgba(39,174,96,0.2); color: #2ecc71; border: 1px solid var(--green); }
-  .fstat.neg { background: rgba(192,57,43,0.2); color: #e74c3c; border: 1px solid var(--red); }
-  .fstat.neu { background: rgba(41,128,185,0.2); color: #3498db; border: 1px solid var(--blue); }
-
-  /* ── BADGE EARNED TOAST ── */
-  #badge-toast {
-    position: fixed;
-    top: 80px;
-    right: 20px;
-    background: linear-gradient(135deg, #1a1a2e, #16213e);
-    border: 2px solid var(--yellow);
-    border-radius: 10px;
-    padding: 16px 20px;
-    color: var(--light);
-    font-size: 0.9rem;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
-    z-index: 200;
-    transform: translateX(120%);
-    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-    max-width: 260px;
-  }
-
-  #badge-toast.show { transform: translateX(0); }
-
-  #badge-toast .toast-icon { font-size: 2rem; text-align: center; margin-bottom: 6px; }
-  #badge-toast .toast-title { color: var(--yellow); font-weight: bold; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }
-  #badge-toast .toast-name { font-size: 1.1rem; font-weight: bold; margin: 4px 0; }
-  #badge-toast .toast-desc { color: #95a5a6; font-size: 0.8rem; line-height: 1.4; }
-
-  /* ── PROGRESS ── */
-  .progress-wrap {
-    margin-bottom: 20px;
-  }
-
-  .progress-label {
-    display: flex;
-    justify-content: space-between;
-    font-size: 0.75rem;
-    color: var(--gray);
-    margin-bottom: 6px;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-  }
-
-  .progress-track {
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: var(--yellow);
-    border-radius: 2px;
-    transition: width 0.5s ease;
-  }
-
-  /* ── BUTTONS ── */
-  .btn {
-    display: inline-block;
-    padding: 12px 28px;
-    border-radius: 6px;
-    border: none;
-    cursor: pointer;
-    font-family: 'Georgia', serif;
-    font-size: 0.95rem;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    letter-spacing: 0.5px;
-  }
-
-  .btn-primary {
-    background: var(--red);
-    color: #fff;
-  }
-
-  .btn-primary:hover { background: #e74c3c; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(192,57,43,0.4); }
-
-  .btn-secondary {
-    background: transparent;
-    color: var(--light);
-    border: 1px solid var(--border);
-  }
-
-  .btn-secondary:hover { border-color: var(--light); }
-
-  .btn-cheat {
-    background: linear-gradient(135deg, #6c3483, #1a5276);
-    color: #fff;
-    border: 1px solid #8e44ad;
-    font-size: 0.8rem;
-    padding: 8px 16px;
-  }
-
-  .btn-cheat:hover {
-    background: linear-gradient(135deg, #8e44ad, #2471a3);
-    box-shadow: 0 0 15px rgba(142,68,173,0.5);
-  }
-
-  .btn-next {
-    background: var(--green);
-    color: #fff;
-    margin-top: 16px;
-  }
-
-  .btn-next:hover { background: #2ecc71; }
-
-  /* ── INTRO SCREEN ── */
-  #intro-logo {
-    text-align: center;
-    padding: 40px 0 30px;
-  }
-
-  #intro-logo .logo-text {
-    font-size: 3.5rem;
-    font-weight: 900;
-    color: var(--red);
-    text-transform: uppercase;
-    letter-spacing: 4px;
-    text-shadow: 0 0 30px rgba(192,57,43,0.4);
-    line-height: 1;
-  }
-
-  #intro-logo .logo-sub {
-    font-size: 1rem;
-    color: var(--gray);
-    letter-spacing: 6px;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
-
-  #intro-logo .logo-tagline {
-    margin-top: 16px;
-    font-size: 1.1rem;
-    color: var(--light);
-    font-style: italic;
-  }
-
-  #name-input {
-    background: var(--dark);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 12px 16px;
-    color: var(--light);
-    font-family: 'Georgia', serif;
-    font-size: 1rem;
-    width: 100%;
-    margin: 12px 0;
-    transition: border-color 0.2s;
-  }
-
-  #name-input:focus { outline: none; border-color: var(--yellow); }
-
-  /* ── MODULE INTRO ── */
-  .module-intro {
-    text-align: center;
-    padding: 20px 0;
-  }
-
-  .badge-big {
-    font-size: 4rem;
-    margin-bottom: 12px;
-    display: block;
-  }
-
-  .badge-module-title {
-    font-size: 1.8rem;
-    color: var(--yellow);
-    text-transform: uppercase;
-    letter-spacing: 3px;
-    margin-bottom: 12px;
-  }
-
-  /* ── FINAL SCREEN ── */
-  #final-score-display {
-    text-align: center;
-    padding: 30px 0;
-  }
-
-  #final-score-display .score-num {
-    font-size: 4rem;
-    font-weight: 900;
-    color: var(--yellow);
-    font-family: monospace;
-    text-shadow: 0 0 20px rgba(243,156,18,0.5);
-  }
-
-  #final-score-display .score-label {
-    font-size: 1rem;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-top: 4px;
-  }
-
-  .final-badges {
-    display: flex;
-    justify-content: center;
-    gap: 16px;
-    margin: 24px 0;
-    flex-wrap: wrap;
-  }
-
-  .final-badge-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .final-badge-item .badge {
-    width: 52px;
-    height: 52px;
-    font-size: 1.6rem;
-  }
-
-  .final-badge-item span {
-    font-size: 0.65rem;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-align: center;
-    max-width: 70px;
-  }
-
-  .grade-text {
-    font-size: 1.3rem;
-    font-style: italic;
-    color: var(--light);
-    margin: 12px 0;
-  }
-
-  .share-box {
-    background: var(--dark);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 16px;
-    margin-top: 16px;
-    font-size: 0.9rem;
-    color: var(--gray);
-  }
-
-  /* ── TICKER ── */
-  #ticker {
-    background: var(--red);
-    color: #fff;
-    font-size: 0.75rem;
-    padding: 5px 0;
-    overflow: hidden;
-    white-space: nowrap;
-  }
-
-  #ticker-inner {
-    display: inline-block;
-    animation: scroll-left 30s linear infinite;
-    padding-left: 100%;
-  }
-
-  @keyframes scroll-left {
-    0%   { transform: translateX(0); }
-    100% { transform: translateX(-100%); }
-  }
-
-  /* ── CHEAT PANEL ── */
-  #cheat-panel {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    z-index: 150;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: 8px;
-  }
-
-  #cheat-toggle {
-    width: 36px;
-    height: 36px;
-    border-radius: 50%;
-    background: rgba(30,30,60,0.8);
-    border: 1px solid var(--border);
-    color: var(--gray);
-    cursor: pointer;
-    font-size: 0.9rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.2s;
-  }
-
-  #cheat-toggle:hover { border-color: #8e44ad; color: #c39bd3; }
-
-  #cheat-menu {
-    background: rgba(15,15,26,0.95);
-    border: 1px solid #8e44ad;
-    border-radius: 8px;
-    padding: 14px;
-    display: none;
-    flex-direction: column;
-    gap: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-    min-width: 200px;
-  }
-
-  #cheat-menu.open { display: flex; }
-
-  #cheat-menu p {
-    font-size: 0.7rem;
-    color: var(--gray);
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    margin-bottom: 4px;
-  }
-
-  /* ── RESPONSIVE ── */
-  @media (max-width: 600px) {
-    #topbar h1 { font-size: 1rem; }
-    .stat-value { font-size: 1rem; }
-    #intro-logo .logo-text { font-size: 2.5rem; }
-    .card { padding: 18px; }
-  }
-
-  /* ── TYPING ANIMATION ── */
-  .typing::after {
-    content: '|';
-    animation: blink 0.7s infinite;
-  }
-
-  @keyframes blink { 50% { opacity: 0; } }
-
-  /* ── MODULE STRIPE ── */
-  .module-stripe {
-    background: linear-gradient(90deg, var(--red), transparent);
-    height: 3px;
-    border-radius: 2px;
-    margin-bottom: 20px;
-  }
-
-  /* ── SCENARIO CONTEXT ── */
-  .scenario-context {
-    display: flex;
-    align-items: flex-start;
-    gap: 14px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 6px;
-    padding: 14px;
-    margin-bottom: 16px;
-    border-left: 3px solid var(--yellow);
-  }
-
-  .scenario-context .ctx-icon { font-size: 1.8rem; flex-shrink: 0; }
-  .scenario-context .ctx-text { font-size: 0.9rem; color: #bdc3c7; line-height: 1.6; }
-
-  /* ── CRED WARNING ── */
-  #cred-warning {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background: rgba(192,57,43,0.95);
-    border: 2px solid #e74c3c;
-    border-radius: 10px;
-    padding: 30px 40px;
-    text-align: center;
-    z-index: 300;
-    display: none;
-    animation: fadeIn 0.3s ease;
-  }
-  #cred-warning h2 { font-size: 1.5rem; margin-bottom: 10px; }
-  #cred-warning p { margin-bottom: 16px; font-size: 0.9rem; color: #fadbd8; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --yellow: #ffff00;
+  --black: #000000;
+  --white: #ffffff;
+  --blue: #3333ff;
+  --blue-bg: #2222cc;
+  --red: #ff0000;
+  --light-gray: #e8e8e8;
+  --light-blue: #cce4f0;
+  --mid-gray: #888888;
+  --dark-gray: #444444;
+  --font: 'Space Mono', 'Courier New', Courier, monospace;
+}
+
+html, body {
+  font-family: var(--font);
+  background: var(--yellow);
+  color: var(--black);
+  min-height: 100vh;
+  font-size: 14px;
+}
+
+/* ══════════════════ SCREENS ══════════════════ */
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ══════════════════ INTRO ══════════════════ */
+#screen-intro {
+  background: var(--yellow);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  overflow: hidden;
+}
+#screen-intro.active { display: flex; }
+
+/* scattered labels */
+.scattered-labels {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+}
+.label-tag {
+  position: absolute;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.85rem;
+  padding: 4px 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+.label-tag.red   { background: var(--red);  color: var(--white); }
+.label-tag.black { background: var(--black); color: var(--white); }
+.label-tag.blue  { background: var(--blue);  color: var(--white); }
+.label-tag.white { background: var(--white); color: var(--black); border: 2px solid var(--black); }
+
+/* logo */
+.logo-wrap {
+  text-align: center;
+  margin-bottom: 24px;
+  z-index: 1;
+}
+.logo-text {
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: clamp(3rem, 12vw, 5.5rem);
+  line-height: 0.9;
+  color: var(--red);
+  text-transform: uppercase;
+  letter-spacing: -2px;
+  position: relative;
+  display: inline-block;
+}
+.logo-text::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: -5%;
+  width: 110%;
+  height: 0.18em;
+  background: var(--red);
+  transform: translateY(-50%);
+  z-index: -1;
+}
+
+.intro-body {
+  z-index: 1;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+}
+
+.intro-tagline {
+  font-family: var(--font);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  color: var(--black);
+}
+
+.name-row {
+  margin-bottom: 20px;
+}
+.name-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--black);
+  margin-bottom: 6px;
+  display: block;
+  text-align: left;
+}
+#name-input {
+  font-family: var(--font);
+  font-size: 1rem;
+  background: var(--white);
+  border: 2px solid var(--black);
+  padding: 10px 14px;
+  width: 100%;
+  color: var(--black);
+  outline: none;
+}
+#name-input:focus { border-color: var(--blue); }
+#name-input::placeholder { color: var(--mid-gray); }
+
+.intro-btn {
+  display: inline-block;
+  background: var(--white);
+  border: 2.5px solid var(--black);
+  color: var(--black);
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 12px 32px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  margin-bottom: 8px;
+}
+.intro-btn:hover { background: var(--black); color: var(--yellow); }
+
+.intro-links {
+  margin-top: 20px;
+}
+.intro-links a, .intro-links button {
+  display: block;
+  font-family: var(--font);
+  font-size: 0.85rem;
+  color: var(--blue);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border: none;
+  margin: 6px auto;
+  text-align: center;
+}
+.intro-links a:hover, .intro-links button:hover { color: var(--black); }
+
+/* ══════════════════ GAME LAYOUT ══════════════════ */
+#game-wrap {
+  display: flex;
+  min-height: 100vh;
+  background: var(--yellow);
+  position: relative;
+}
+#game-wrap.active { display: flex; }
+
+/* LEFT SIDEBAR */
+#sidebar {
+  width: 200px;
+  min-width: 200px;
+  background: var(--black);
+  color: var(--white);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 30px 16px 20px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.sidebar-stat {
+  text-align: center;
+  margin-bottom: 28px;
+  width: 100%;
+}
+.sidebar-label {
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  margin-bottom: 6px;
+}
+.sidebar-num {
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--white);
+  line-height: 1;
+}
+
+/* CREDIBILITY GAUGE */
+.gauge-wrap {
+  position: relative;
+  width: 110px;
+  height: 60px;
+  margin: 0 auto;
+}
+.gauge-svg {
+  width: 110px;
+  height: 60px;
+  overflow: visible;
+}
+#gauge-needle {
+  transform-origin: 55px 55px;
+  transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* BADGES in sidebar */
+.sidebar-badges {
+  margin-top: auto;
+  width: 100%;
+}
+.sidebar-badges-label {
+  font-size: 0.6rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.sidebar-badge-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+}
+.sbadge {
+  width: 100%;
+  aspect-ratio: 1;
+  background: #222;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  filter: grayscale(1) brightness(0.4);
+  transition: all 0.4s;
+  position: relative;
+}
+.sbadge.earned {
+  filter: none;
+  background: var(--red);
+}
+.sbadge-img {
+  width: 70%;
+  height: 70%;
+  object-fit: contain;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.1rem;
+}
+
+/* RIGHT CONTENT */
+#content {
+  flex: 1;
+  background: var(--light-gray);
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* ══════════════════ GAME SCREENS (inside #content) ══════════════════ */
+.gscreen { display: none; }
+.gscreen.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.gscreen.active { animation: fadeIn 0.3s ease; }
+
+/* MODULE INTRO */
+#gs-module-intro {
+  background: var(--blue-bg);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  padding: 40px 24px;
+}
+#gs-module-intro.active { display: flex; }
+
+.confetti-wrap {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+}
+.confetti-piece {
+  position: absolute;
+  width: 12px; height: 12px;
+  animation: confetti-fall linear infinite;
+}
+@keyframes confetti-fall {
+  0%   { transform: translateY(-20px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(110vh) rotate(720deg); opacity: 0.5; }
+}
+
+.module-intro-card {
+  text-align: center;
+  color: var(--white);
+  z-index: 1;
+  max-width: 400px;
+}
+.module-badge-square {
+  width: 120px;
+  height: 120px;
+  background: var(--red);
+  margin: 0 auto 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3.5rem;
+}
+.module-badge-earned-label {
+  font-size: 0.7rem;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 12px;
+}
+.module-title-big {
+  font-size: 1.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+.module-desc-text {
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 28px;
+}
+.module-next-btn {
+  display: inline-block;
+  border: 2.5px solid var(--white);
+  background: transparent;
+  color: var(--white);
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  padding: 12px 36px;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+.module-next-btn:hover { background: var(--white); color: var(--blue-bg); }
+
+/* SCENARIO SCREEN */
+#gs-scenario {
+  padding: 0;
+}
+
+.scenario-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  padding: 30px 24px;
+}
+
+/* narrative text (gray, above the card) */
+.narrative-text {
+  font-size: 0.9rem;
+  line-height: 1.7;
+  color: var(--dark-gray);
+  margin-bottom: 16px;
+  font-style: normal;
+}
+
+/* tweet/social card */
+.social-card {
+  background: var(--light-blue);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.social-card-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.avatar {
+  width: 36px;
+  height: 36px;
+  background: var(--mid-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  font-weight: 700;
+  color: var(--white);
+}
+.avatar.av-kurt   { background: #8B7355; }
+.avatar.av-anna   { background: #c0392b; }
+.avatar.av-erik   { background: #2980b9; }
+.avatar.av-sara   { background: #27ae60; }
+.avatar.av-lars   { background: #8e44ad; }
+.avatar.av-maria  { background: #e67e22; }
+.avatar.av-sven   { background: #1a5276; }
+
+.social-user-name {
+  font-weight: 700;
+  font-size: 0.85rem;
+  color: var(--black);
+}
+.social-user-role {
+  font-size: 0.75rem;
+  color: var(--mid-gray);
+}
+.social-card-text {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--black);
+}
+
+/* newspaper card */
+.news-card {
+  background: var(--white);
+  border-left: 5px solid var(--black);
+  padding: 14px 18px;
+  margin-bottom: 16px;
+}
+.news-card-source {
+  font-size: 0.65rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  margin-bottom: 6px;
+}
+.news-card-headline {
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--black);
+  margin-bottom: 4px;
+}
+.news-card-sub {
+  font-size: 0.8rem;
+  color: var(--mid-gray);
+  font-style: italic;
+}
+
+/* yellow promo card */
+.yellow-card {
+  background: var(--yellow);
+  padding: 16px 18px;
+  margin-bottom: 16px;
+}
+.yellow-card-badge {
+  display: inline-block;
+  background: var(--black);
+  color: var(--white);
+  font-size: 0.65rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+}
+.yellow-card-name {
+  font-weight: 700;
+  font-size: 1.5rem;
+  line-height: 1.2;
+  color: var(--black);
+  text-transform: uppercase;
+}
+
+/* question */
+.scenario-question {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--black);
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+/* choices – blue links */
+.choices-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  border-top: 1px solid #ccc;
+}
+.choice-link {
+  display: block;
+  padding: 14px 0;
+  border-bottom: 1px solid #ccc;
+  font-family: var(--font);
+  font-size: 0.9rem;
+  color: var(--blue);
+  text-decoration: underline;
+  cursor: pointer;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  text-align: left;
+  line-height: 1.5;
+  transition: background 0.1s, color 0.1s;
+}
+.choice-link:hover { background: rgba(51,51,255,0.06); color: #0000aa; }
+.choice-link:disabled { pointer-events: none; }
+.choice-link.chosen-good { color: #006600; text-decoration: none; background: rgba(0,150,0,0.08); }
+.choice-link.chosen-bad  { color: #990000; text-decoration: none; background: rgba(200,0,0,0.08); }
+.choice-link.chosen-neu  { color: #444;    text-decoration: none; background: rgba(0,0,0,0.05); }
+
+/* feedback */
+.feedback-panel {
+  display: none;
+  margin-top: 16px;
+  background: var(--white);
+  padding: 16px 18px;
+  border-left: 4px solid var(--black);
+  animation: fadeIn 0.25s ease;
+}
+.feedback-panel.show { display: block; }
+.feedback-title { font-weight: 700; font-size: 0.9rem; margin-bottom: 6px; }
+.feedback-body { font-size: 0.85rem; line-height: 1.6; color: var(--dark-gray); margin-bottom: 12px; }
+.feedback-deltas { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 14px; }
+.fdelta {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 10px;
+  border: 2px solid;
+}
+.fdelta.pos { color: #006600; border-color: #006600; }
+.fdelta.neg { color: #990000; border-color: #990000; }
+.fdelta.neu { color: var(--mid-gray); border-color: var(--mid-gray); }
+.feedback-next {
+  display: inline-block;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 10px 24px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.feedback-next:hover { background: var(--blue); }
+
+/* FINAL SCREEN */
+#gs-final {
+  background: var(--light-gray);
+  min-height: 100vh;
+  padding: 40px 24px;
+  max-width: 640px;
+  margin: 0 auto;
+}
+#gs-final.active { display: block; }
+
+.final-score-num {
+  font-size: 4rem;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1;
+}
+.final-score-label {
+  font-size: 0.7rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: var(--mid-gray);
+  margin-bottom: 24px;
+}
+.final-grade {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 28px;
+  color: var(--black);
+}
+.final-badge-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+.fba {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.fba-square {
+  width: 56px;
+  height: 56px;
+  background: var(--mid-gray);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  filter: grayscale(1) brightness(0.5);
+  transition: all 0.4s;
+}
+.fba-square.earned { background: var(--red); filter: none; }
+.fba-label { font-size: 0.6rem; color: var(--mid-gray); text-transform: uppercase; letter-spacing: 1px; text-align: center; max-width: 60px; }
+
+.final-edu-box {
+  background: var(--white);
+  border-left: 4px solid var(--black);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  line-height: 1.7;
+  color: var(--dark-gray);
+}
+.final-share-box {
+  background: var(--yellow);
+  padding: 14px 18px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  line-height: 1.6;
+}
+.final-restart-btn {
+  display: inline-block;
+  background: var(--black);
+  color: var(--white);
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 12px 28px;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.final-restart-btn:hover { background: var(--blue); }
+
+/* ══════════════════ BADGE TOAST ══════════════════ */
+#badge-toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: var(--blue-bg);
+  color: var(--white);
+  padding: 14px 18px;
+  z-index: 500;
+  max-width: 240px;
+  transform: translateX(120%);
+  transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  border: 2px solid var(--white);
+}
+#badge-toast.show { transform: translateX(0); }
+.toast-label { font-size: 0.6rem; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.6); margin-bottom: 4px; }
+.toast-badge-name { font-weight: 700; font-size: 1rem; }
+.toast-desc { font-size: 0.75rem; color: rgba(255,255,255,0.7); margin-top: 4px; }
+
+/* ══════════════════ CHEAT PANEL ══════════════════ */
+#cheat-panel {
+  position: fixed;
+  bottom: 16px;
+  left: 16px;
+  z-index: 400;
+}
+#cheat-toggle-btn {
+  background: var(--black);
+  color: var(--yellow);
+  border: 2px solid var(--yellow);
+  font-family: var(--font);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+#cheat-toggle-btn:hover { background: var(--yellow); color: var(--black); }
+#cheat-menu {
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+#cheat-menu.open { display: flex; }
+.cheat-opt {
+  background: var(--black);
+  color: var(--white);
+  border: 1.5px solid #444;
+  font-family: var(--font);
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 8px 14px;
+  cursor: pointer;
+  text-align: left;
+  transition: background 0.1s, color 0.1s;
+  white-space: nowrap;
+}
+.cheat-opt:hover { background: var(--yellow); color: var(--black); border-color: var(--yellow); }
+
+/* ══════════════════ CRED WARNING ══════════════════ */
+#cred-warn-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  z-index: 600;
+  align-items: center;
+  justify-content: center;
+}
+#cred-warn-overlay.show { display: flex; }
+.cred-warn-box {
+  background: var(--red);
+  color: var(--white);
+  padding: 36px 40px;
+  text-align: center;
+  max-width: 380px;
+}
+.cred-warn-box h2 { font-size: 1.4rem; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.cred-warn-box p { font-size: 0.85rem; line-height: 1.6; margin-bottom: 20px; }
+.cred-warn-btn {
+  background: var(--white);
+  color: var(--red);
+  border: none;
+  font-family: var(--font);
+  font-weight: 700;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 10px 28px;
+  cursor: pointer;
+}
+
+/* ══════════════════ RESPONSIVE ══════════════════ */
+@media (max-width: 640px) {
+  #sidebar { width: 100px; min-width: 100px; padding: 16px 8px; }
+  .sidebar-num { font-size: 1.6rem; }
+  .gauge-wrap { width: 80px; height: 44px; }
+  .gauge-svg { width: 80px; height: 44px; }
+  #gauge-needle { transform-origin: 40px 40px; }
+  .scenario-inner { padding: 20px 14px; }
+  #gs-final { padding: 24px 14px; }
+}
 </style>
 </head>
 <body>
 
-<!-- TICKER -->
-<div id="ticker">
-  <span id="ticker-inner">
-    BREAKING: Sociala medier ökar – sanningen minskar &nbsp;•&nbsp;
-    Ny studie: 7 av 10 delar nyheter utan att läsa dem &nbsp;•&nbsp;
-    EXKLUSIVT: Eliten försöker tysta ner denna historia &nbsp;•&nbsp;
-    VARNING: Mainstream-media vill inte att du ser detta &nbsp;•&nbsp;
-    Läkare CHOCKADE av denna enkla trick &nbsp;•&nbsp;
-    Regeringen döljer sanningen om vacciner? &nbsp;•&nbsp;
-    Kändis AVSLÖJAR vad media inte vill berätta &nbsp;•&nbsp;
-  </span>
-</div>
+<!-- ════════════════════════════════════════
+     SCREEN: INTRO
+════════════════════════════════════════ -->
+<div class="screen active" id="screen-intro">
+  <!-- Scattered labels -->
+  <div class="scattered-labels">
+    <span class="label-tag red"   style="top:8%;  left:4%">PROVOCERA</span>
+    <span class="label-tag black" style="top:14%; left:60%">SKRÄMMA</span>
+    <span class="label-tag blue"  style="top:28%; left:72%">STÖRA</span>
+    <span class="label-tag white" style="top:40%; left:2%">CHEAT</span>
+    <span class="label-tag red"   style="top:55%; left:68%">FALSK</span>
+    <span class="label-tag black" style="top:65%; left:5%">ATTACK</span>
+    <span class="label-tag blue"  style="top:72%; left:75%">SLUTA INTE</span>
+    <span class="label-tag white" style="top:82%; left:30%">PROVOCERA</span>
+    <span class="label-tag red"   style="top:88%; left:65%">VIRALT</span>
+  </div>
 
-<!-- TOP BAR -->
-<div id="topbar">
-  <h1>⚠ Dåliga Nyheter</h1>
-  <div id="stats">
-    <div class="stat-item">
-      <span class="stat-value" id="followers-display">0</span>
-      Följare
+  <div class="logo-wrap">
+    <div class="logo-text">DÅLIGA<br>NYHETER</div>
+  </div>
+
+  <div class="intro-body">
+    <p class="intro-tagline">Från fake news till kaos!<br>Hur dålig är du?<br>Skaffa så många följare som möjligt.</p>
+
+    <div class="name-row">
+      <span class="name-label">Ge din nyhetssajt ett namn</span>
+      <input id="name-input" type="text" placeholder="t.ex. SanningensTid, NyheterNu24..." maxlength="40">
     </div>
-    <div class="stat-item">
-      <div id="cred-bar-wrap"><div id="cred-bar" style="width:70%"></div></div>
-      <span style="margin-top:3px">Trovärdighet <span id="cred-pct">70%</span></span>
+
+    <button class="intro-btn" onclick="startGame()">SPELA SPELET</button>
+
+    <div class="intro-links">
+      <a href="#" onclick="event.preventDefault(); showAbout()">Om spelet</a>
+      <button onclick="cheatMaxScore()">⚡ Max poäng (fusk)</button>
     </div>
   </div>
 </div>
 
-<!-- BADGES BAR -->
-<div id="badges-bar">
-  <span>Märken:</span>
-  <div class="badge" id="badge-0" title="Imitering">🎭</div>
-  <div class="badge" id="badge-1" title="Känsloskapande">😱</div>
-  <div class="badge" id="badge-2" title="Polarisering">⚔️</div>
-  <div class="badge" id="badge-3" title="Konspirationsteorier">🔍</div>
-  <div class="badge" id="badge-4" title="Diskreditering">🗑️</div>
-  <div class="badge" id="badge-5" title="Trollning">👾</div>
-</div>
+<!-- ════════════════════════════════════════
+     GAME WRAP (sidebar + content)
+════════════════════════════════════════ -->
+<div id="game-wrap">
 
-<!-- MAIN GAME CONTAINER -->
-<div id="game-container">
-
-  <!-- ══ SCREEN: INTRO ══ -->
-  <div class="screen active" id="screen-intro">
-    <div id="intro-logo">
-      <div class="logo-text">Dåliga<br>Nyheter</div>
-      <div class="logo-sub">Fake News-spelet</div>
-      <div class="logo-tagline">Kan du slå mitt resultat?</div>
+  <!-- LEFT SIDEBAR -->
+  <div id="sidebar">
+    <div class="sidebar-stat">
+      <div class="sidebar-label">FÖLJARE</div>
+      <div class="sidebar-num" id="followers-num">500</div>
     </div>
 
-    <div class="card">
-      <h2>Välkommen till Dåliga Nyheter</h2>
-      <p>I detta spel tar du rollen som en desinformationssprider. Din uppgift är att bygga upp ett falskt medieimperium med så många <strong>följare</strong> som möjligt – utan att tappa för mycket <strong>trovärdighet</strong>.</p>
-      <p>Längs vägen lär du dig de sex vanligaste teknikerna som används för att sprida falska nyheter. Ju mer du vet om hur desinformation fungerar, desto lättare är det att genomskåda den.</p>
-      <p><strong>Ge din falska nyhetssajt ett namn:</strong></p>
-      <input type="text" id="name-input" placeholder="t.ex. SanningensRöst, SvenskaNyheter24..." maxlength="40">
-      <div style="margin-top:16px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
-        <button class="btn btn-primary" onclick="startGame()">Börja spela →</button>
-        <button class="btn btn-cheat" onclick="toggleCheatMenu()">⚡ Fusk-läge</button>
+    <div class="sidebar-stat">
+      <div class="sidebar-label">TROVÄRDIGHET</div>
+      <div class="gauge-wrap">
+        <svg class="gauge-svg" viewBox="0 0 110 60" fill="none">
+          <!-- background arc -->
+          <path d="M 10 55 A 45 45 0 0 1 100 55" stroke="#333" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <!-- red danger arc -->
+          <path d="M 10 55 A 45 45 0 0 1 33 17" stroke="#ff0000" stroke-width="8" stroke-linecap="round" fill="none"/>
+          <!-- needle -->
+          <line id="gauge-needle" x1="55" y1="55" x2="55" y2="12" stroke="white" stroke-width="3" stroke-linecap="round"/>
+          <!-- center dot -->
+          <circle cx="55" cy="55" r="4" fill="white"/>
+        </svg>
       </div>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN: MODULE INTRO ══ -->
-  <div class="screen" id="screen-module-intro">
-    <div class="card module-intro">
-      <span class="badge-big" id="mi-icon"></span>
-      <div class="badge-module-title" id="mi-title"></div>
-      <p id="mi-desc" style="max-width:520px; margin:0 auto 20px; text-align:left;"></p>
-      <button class="btn btn-primary" onclick="startModule()">Starta modul →</button>
-    </div>
-  </div>
-
-  <!-- ══ SCREEN: SCENARIO ══ -->
-  <div class="screen" id="screen-scenario">
-    <div class="progress-wrap">
-      <div class="progress-label">
-        <span id="prog-module-name"></span>
-        <span id="prog-text"></span>
-      </div>
-      <div class="progress-track">
-        <div class="progress-fill" id="prog-fill"></div>
-      </div>
+      <div style="font-size:0.7rem; color:var(--mid-gray); margin-top:6px;" id="cred-pct-text">70%</div>
     </div>
 
-    <div class="module-stripe"></div>
-
-    <div class="card">
-      <div class="scenario-context">
-        <span class="ctx-icon" id="sc-icon"></span>
-        <span class="ctx-text" id="sc-context"></span>
-      </div>
-
-      <div id="sc-newspaper" style="display:none" class="newspaper">
-        <div class="paper-name" id="sc-paper-name"></div>
-        <div class="headline" id="sc-headline"></div>
-        <div class="sub" id="sc-sub"></div>
-      </div>
-
-      <h2 id="sc-question"></h2>
-      <div class="choices" id="sc-choices"></div>
-
-      <div id="feedback-box">
-        <h3 id="fb-title"></h3>
-        <p id="fb-text"></p>
-        <div class="feedback-stats" id="fb-stats"></div>
-        <button class="btn btn-next" onclick="nextStep()" style="margin-top:16px">Fortsätt →</button>
+    <div class="sidebar-badges">
+      <div class="sidebar-badges-label">MÄRKEN</div>
+      <div class="sidebar-badge-grid">
+        <div class="sbadge" id="sb-0" title="Imitering"><span class="sbadge-img">🎭</span></div>
+        <div class="sbadge" id="sb-1" title="Känsloskapande"><span class="sbadge-img">😱</span></div>
+        <div class="sbadge" id="sb-2" title="Polarisering"><span class="sbadge-img">⚔️</span></div>
+        <div class="sbadge" id="sb-3" title="Konspiration"><span class="sbadge-img">🔍</span></div>
+        <div class="sbadge" id="sb-4" title="Diskreditering"><span class="sbadge-img">🗑️</span></div>
+        <div class="sbadge" id="sb-5" title="Trollning"><span class="sbadge-img">👾</span></div>
       </div>
     </div>
   </div>
 
-  <!-- ══ SCREEN: FINAL ══ -->
-  <div class="screen" id="screen-final">
-    <div class="card">
-      <h2 style="text-align:center; font-size:2rem;">Spelet är slut!</h2>
-      <div id="final-score-display">
-        <div class="score-num" id="final-followers"></div>
-        <div class="score-label">Följare totalt</div>
-        <div class="grade-text" id="final-grade"></div>
-      </div>
+  <!-- RIGHT CONTENT -->
+  <div id="content">
 
-      <div class="final-badges" id="final-badges-list"></div>
-
-      <div style="text-align:center; margin-bottom:20px;">
-        <p style="color:#bdc3c7; font-size:0.9rem; max-width:500px; margin:0 auto 16px; line-height:1.7;">
-          Nu vet du hur desinformation sprids. De sex teknikerna – imitering, känsloskapande, polarisering, konspirationsteorier, diskreditering och trollning – används dagligen för att manipulera vad vi tror på. Nu när du känner igen dem är det svårare att luras.
-        </p>
-      </div>
-
-      <div class="share-box">
-        <strong>Dela ditt resultat:</strong> "Jag fick <span id="share-followers"></span> följare och <span id="share-cred"></span>% trovärdighet i Dåliga Nyheter-spelet. Kan du slå det?"
-      </div>
-
-      <div style="margin-top:20px; text-align:center;">
-        <button class="btn btn-primary" onclick="restartGame()">Spela igen</button>
+    <!-- MODULE INTRO -->
+    <div class="gscreen" id="gs-module-intro">
+      <div class="confetti-wrap" id="confetti-wrap"></div>
+      <div class="module-intro-card">
+        <div class="module-badge-earned-label" id="mi-earned-label">NYTT MÄRKE!</div>
+        <div class="module-badge-square" id="mi-badge-icon">🎭</div>
+        <div class="module-title-big" id="mi-title">IMITERING</div>
+        <p class="module-desc-text" id="mi-desc"></p>
+        <button class="module-next-btn" onclick="startModuleScenarios()">NÄSTA</button>
       </div>
     </div>
-  </div>
 
-</div><!-- /game-container -->
+    <!-- SCENARIO -->
+    <div class="gscreen" id="gs-scenario">
+      <div class="scenario-inner">
+        <p class="narrative-text" id="sc-narrative"></p>
+
+        <div id="sc-social-card" class="social-card" style="display:none">
+          <div class="social-card-header">
+            <div class="avatar" id="sc-avatar">K</div>
+            <div>
+              <div class="social-user-name" id="sc-username"></div>
+              <div class="social-user-role" id="sc-userrole"></div>
+            </div>
+          </div>
+          <div class="social-card-text" id="sc-social-text"></div>
+        </div>
+
+        <div id="sc-news-card" class="news-card" style="display:none">
+          <div class="news-card-source" id="sc-news-source"></div>
+          <div class="news-card-headline" id="sc-news-headline"></div>
+          <div class="news-card-sub" id="sc-news-sub"></div>
+        </div>
+
+        <div id="sc-yellow-card" class="yellow-card" style="display:none">
+          <span class="yellow-card-badge" id="sc-yellow-badge"></span>
+          <div class="yellow-card-name" id="sc-yellow-name"></div>
+        </div>
+
+        <div class="scenario-question" id="sc-question"></div>
+
+        <div class="choices-wrap" id="sc-choices"></div>
+
+        <div class="feedback-panel" id="feedback-panel">
+          <div class="feedback-title" id="fb-title"></div>
+          <div class="feedback-body" id="fb-body"></div>
+          <div class="feedback-deltas" id="fb-deltas"></div>
+          <button class="feedback-next" onclick="nextStep()">FORTSÄTT →</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FINAL -->
+    <div class="gscreen" id="gs-final">
+      <h2 style="font-size:1rem; letter-spacing:3px; text-transform:uppercase; margin-bottom:6px;">SPELET ÄR SLUT</h2>
+      <div class="final-score-num" id="final-num">0</div>
+      <div class="final-score-label">FÖLJARE TOTALT</div>
+      <p class="final-grade" id="final-grade"></p>
+
+      <div class="final-badge-row" id="final-badge-row"></div>
+
+      <div class="final-edu-box">
+        Nu vet du hur desinformation sprids. De sex teknikerna – imitering, känsloskapande, polarisering, konspirationsteorier, diskreditering och trollning – används varje dag för att manipulera vad vi tror på. Nu när du känner igen dem är det svårare att luras.
+      </div>
+
+      <div class="final-share-box">
+        <strong>Utmana en vän:</strong> "Jag fick <span id="share-followers"></span> följare och <span id="share-cred"></span>% trovärdighet i Dåliga Nyheter. Kan du slå det?"
+      </div>
+
+      <button class="final-restart-btn" onclick="restartGame()">SPELA IGEN</button>
+    </div>
+
+  </div><!-- /content -->
+</div><!-- /game-wrap -->
 
 <!-- BADGE TOAST -->
 <div id="badge-toast">
-  <div class="toast-icon" id="toast-icon"></div>
-  <div class="toast-title">Nytt märke uppnått!</div>
-  <div class="toast-name" id="toast-name"></div>
+  <div class="toast-label">MÄRKE UPPNÅTT</div>
+  <div class="toast-badge-name" id="toast-name"></div>
   <div class="toast-desc" id="toast-desc"></div>
 </div>
 
 <!-- CHEAT PANEL -->
 <div id="cheat-panel">
   <div id="cheat-menu">
-    <p>⚡ Fusk-alternativ</p>
-    <button class="btn btn-cheat" onclick="cheatMaxScore()">🏆 Maxpoäng &amp; trovärdighet</button>
-    <button class="btn btn-cheat" onclick="cheatFollowers()">📈 +50 000 följare</button>
-    <button class="btn btn-cheat" onclick="cheatCredibility()">✅ Full trovärdighet</button>
-    <button class="btn btn-cheat" onclick="cheatAllBadges()">🎖️ Alla märken</button>
-    <button class="btn btn-cheat" onclick="cheatSkipToEnd()">⏩ Hoppa till slutet</button>
+    <button class="cheat-opt" onclick="cheatMaxScore()">🏆 MAX POÄNG &amp; TROVÄRDIGHET</button>
+    <button class="cheat-opt" onclick="cheatAddFollowers()">📈 +50 000 FÖLJARE</button>
+    <button class="cheat-opt" onclick="cheatFullCred()">✅ FULL TROVÄRDIGHET</button>
+    <button class="cheat-opt" onclick="cheatAllBadges()">🎖️ ALLA MÄRKEN</button>
+    <button class="cheat-opt" onclick="cheatSkipEnd()">⏩ HOPPA TILL SLUTET</button>
   </div>
-  <button id="cheat-toggle" onclick="toggleCheatMenu()" title="Fusk-läge">⚡</button>
+  <button id="cheat-toggle-btn" onclick="toggleCheat()">⚡ FUSK</button>
 </div>
 
 <!-- CRED WARNING -->
-<div id="cred-warning">
-  <h2>⚠️ Trovärdigheten är noll!</h2>
-  <p>Du har förlorat all trovärdighet. Ingen tror på dig längre.<br>Ditt konto raderades automatiskt.</p>
-  <button class="btn btn-primary" onclick="restartGame()">Försök igen</button>
+<div id="cred-warn-overlay">
+  <div class="cred-warn-box">
+    <h2>Trovärdigheten är noll!</h2>
+    <p>Du har förlorat all trovärdighet. Ingen tror längre på dig. Ditt medieimperium kollapsade.</p>
+    <button class="cred-warn-btn" onclick="restartGame()">FÖRSÖK IGEN</button>
+  </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  GAME DATA
-// ══════════════════════════════════════════════
-
+// ═══════════════════════════════════════════════
 const MODULES = [
   {
-    id: 0,
-    icon: '🎭',
-    title: 'IMITERING',
-    shortTitle: 'Imitering',
-    desc: `Imitering innebär att man skapar konton, sajter eller material som ser ut att komma från trovärdiga källor – men gör det inte. Falska nyhetssajter med namn liknande riktiga tidningar, falska kändis-konton och förfalskade screenshots är vanliga exempel. Målet är att låna legitimitet från verkliga källor.`,
+    id: 0, icon: '🎭', title: 'IMITERING', shortTitle: 'Imitering',
+    earnedLabel: 'NYTT MÄRKE!',
+    desc: 'Imitering innebär att skapa konton, sajter eller material som ser ut att komma från trovärdiga källor – men inte gör det. Falska nyhetssajter med namn liknande riktiga tidningar, fejkkändis-konton och förfalskade citat är vanliga verktyg.',
     scenarios: [
       {
-        icon: '📱',
-        context: 'Du ska starta ett Twitter/X-konto för din nya "nyhetssajt". Vilket namn väljer du?',
-        newspaper: null,
+        narrative: 'Du ska starta ett Twitter-konto för din nya "nyhetssajt". Du vill att det ska se professionellt och officiellt ut.',
+        card: { type: 'yellow', badge: 'STEG 1: SKAPA KONTO', name: 'Din plattform behöver ett namn' },
         question: 'Vad döper du ditt konto till?',
         choices: [
-          { text: '@MinaEgnaÅsikterOmNyheter', followers: -50, cred: +5, type: 'wrong', fb_title: 'För ärligt!', fb: 'Ett ärligt namn lockar inga följare. Ingen delar nyheter från "MinaEgnaÅsikter" – det låter för personligt.' },
-          { text: '@SvenskaFakta_Official', followers: +800, cred: -5, type: 'correct', fb_title: 'Smart val!', fb: 'Ordet "Official" ger ett sken av auktoritet. Ändelsen "_Official" lurar många att tro att detta är ett verifierat konto. +800 följare!' },
-          { text: '@SVTNyheter_2', followers: +1200, cred: -15, type: 'correct', fb_title: 'Riskabelt men effektivt!', fb: 'Att imitera SVT ger massor av trovärdighet – men det är rättsligt riskabelt och kan snabbt avslöjas. Du fick följare men tappade trovärdighet.' },
-          { text: '@Nyheter_Sverige_Nu', followers: +600, cred: 0, type: 'neutral', fb_title: 'Helt okej', fb: 'Ett generiskt namn. Inget fel med det, men det sticker inte ut heller.' }
+          { text: '@MinaEgnaÅsikterOmNyheter', followers: -50, cred: +5, type: 'bad',
+            fbTitle: 'För ärligt!', fb: 'Ingen delar nyheter från ett konto som heter "MinaEgnaÅsikter". Det låter för personligt och ingen tar dig på allvar.' },
+          { text: '@SvenskaFakta_Official', followers: +800, cred: -5, type: 'good',
+            fbTitle: 'Smart val!', fb: 'Ordet "Official" skapar ett sken av auktoritet. Många tror att det är ett verifierat konto. Du fick 800 nya följare!' },
+          { text: '@SVT_Nyheter2', followers: +1400, cred: -18, type: 'good',
+            fbTitle: 'Riskabelt men effektivt!', fb: 'Att imitera SVT ger massor av trovärdighet – men det är rättsligt riskabelt och kan snabbt avslöjas. Du fick många följare men tappade trovärdighet.' }
         ]
       },
       {
-        icon: '📰',
-        context: 'Du hittar en gammal artikel från Aftonbladet om en studie. Studien visade en svag koppling, men du vill göra den mer dramatisk.',
-        newspaper: { name: 'AFTONBLADET (original)', headline: 'Ny studie: Liten ökning av X noterad bland unga', sub: 'Forskarna betonar att sambandet är svagt och behöver studeras mer' },
+        narrative: 'Du hittar en gammal artikel från Aftonbladet om en studie. Studien visade en svag koppling, men du vill göra den mer dramatisk och dela den.',
+        card: { type: 'news', source: 'AFTONBLADET', headline: 'Ny studie: Liten ökning av X noterad bland unga', sub: 'Forskarna betonar att sambandet är svagt och behöver studeras mer' },
         question: 'Hur återpublicerar du artikeln?',
         choices: [
-          { text: 'Delar originaltexten med full källhänvisning', followers: +100, cred: +10, type: 'wrong', fb_title: 'Journalistiskt korrekt – men tråkigt', fb: 'Det är bra journalistik men ger inga virala följare. Sanningen är sällan tillräckligt dramatisk.' },
-          { text: 'Ändrar rubriken till: "CHOCKERANDE: Forskning bevisar att X förstör ungas hjärnor"', followers: +2200, cred: -20, type: 'correct', fb_title: 'Viralt – men vilseledande', fb: 'Clickbait-rubriker sprids explosivt. Du fick massor av följare men skadade din trovärdighet allvarligt.' },
-          { text: 'Lägger till "Aftonbladet rapporterar:" i din version utan att ange att det är omskrivet', followers: +1500, cred: -10, type: 'correct', fb_title: 'Klassisk imitering!', fb: 'Att låtsas citera en källa korrekt medan du förvanskar innehållet är en klassisk desinformationsteknik.' }
+          { text: 'Delar originaltexten med fullständig källhänvisning', followers: +100, cred: +10, type: 'bad',
+            fbTitle: 'Journalistiskt korrekt – men tråkigt', fb: 'Det är bra journalistik men ger inga virala följare. Sanningen är sällan tillräckligt dramatisk.' },
+          { text: 'Byter rubriken till: "CHOCKERANDE: Forskning bevisar att X förstör ungas hjärnor"', followers: +2200, cred: -20, type: 'good',
+            fbTitle: 'Clickbait – viralt!', fb: 'Clickbait-rubriker sprids explosivt på sociala medier. Du fick massor av följare men skadade din trovärdighet.' },
+          { text: 'Skriver "Aftonbladet rapporterar:" i din version utan att ange att det är omskrivet', followers: +1600, cred: -12, type: 'good',
+            fbTitle: 'Klassisk imitering!', fb: 'Att låtsas citera en källa korrekt medan du förvanskar innehållet är en klassisk desinformationsteknik.' }
         ]
       },
       {
-        icon: '🌐',
-        context: 'Du registrerar domännamnet för din sajt. Du vill att den ska se legitim ut.',
-        newspaper: null,
+        narrative: 'Du registrerar domännamnet för din sajt. Du vill att den ska se legitim ut och locka trafik från folk som söker efter riktiga nyheter.',
+        card: { type: 'social', avatar: 'av-sven', user: 'Webbkonsult', role: 'Digital strateg', text: 'Välj ditt domännamn noga – det är ditt varumärke. Folk dömer en sajt på dess URL.' },
         question: 'Vilket domännamn väljer du?',
         choices: [
-          { text: 'minafakenyheter.se', followers: +50, cred: +5, type: 'wrong', fb_title: 'Ärligt men ineffektivt', fb: 'Ingen tar dig på allvar med det namnet. Bra för samvetet, dåligt för följare.' },
-          { text: 'sverigesnyhetsportal.se', followers: +900, cred: 0, type: 'neutral', fb_title: 'Professionellt', fb: 'Låter officiellt nog utan att imitera en specifik källa. Solid bas.' },
-          { text: 'aftonbladet-nyheter.se', followers: +2500, cred: -25, type: 'correct', fb_title: 'Högrisk, hög belöning!', fb: 'Att använda ett riktigt medienamn i domänen är en känd bedragarteknik – och den fungerar. Men det är olagligt och du tappar trovärdighet snabbt när folk märker det.' }
+          { text: 'minafakenyheter.se', followers: +50, cred: +5, type: 'bad',
+            fbTitle: 'Ärligt men ineffektivt', fb: 'Ingen tar dig på allvar med det namnet. Bra för samvetet, dåligt för affärerna.' },
+          { text: 'sverigesnyhetsportal.se', followers: +900, cred: 0, type: 'neu',
+            fbTitle: 'Professionellt nog', fb: 'Låter officiellt utan att imitera en specifik källa. Solid bas att bygga vidare på.' },
+          { text: 'aftonbladet-nyheter.se', followers: +2800, cred: -28, type: 'good',
+            fbTitle: 'Högrisk, hög belöning!', fb: 'Att använda ett riktigt medienamn i domänen är en känd bedragarteknik. Det fungerar – men det är olagligt och trovärdigheten rasar när folk märker det.' }
         ]
       }
     ]
   },
   {
-    id: 1,
-    icon: '😱',
-    title: 'KÄNSLOSKAPANDE',
-    shortTitle: 'Känsloskapande',
-    desc: `Känslomässigt innehåll – rädsla, ilska, upprördhet, sorg – sprids mycket snabbare än saklig information. Desinformatörer utnyttjar detta genom att skriva rubriker och artiklar designade för att utlösa starka känsloreaktioner, vilket gör att folk delar utan att tänka eller kontrollera fakta.`,
+    id: 1, icon: '😱', title: 'KÄNSLOSKAPANDE', shortTitle: 'Känsloskapande',
+    earnedLabel: 'MÄRKE UPPNÅTT!',
+    desc: 'Känslomässigt innehåll – rädsla, ilska, upprördhet, sorg – sprids mycket snabbare än saklig information. Desinformatörer skriver rubriker och artiklar designade för att utlösa starka känsloreaktioner, så att folk delar utan att tänka eller kontrollera fakta.',
     scenarios: [
       {
-        icon: '😰',
-        context: 'Det har skett ett inbrott i en förort. Polisen säger att det handlar om ett isolerat fall. Du vill skriva om det.',
-        newspaper: null,
-        question: 'Vad väljer du för rubrik?',
+        narrative: 'Det har skett ett inbrott i en förort. Polisen säger att det är ett isolerat fall. Du vill skriva om det och nå så många som möjligt.',
+        card: { type: 'news', source: 'POLISENS PRESSRELEASE', headline: 'Inbrott rapporterat – polis utreder isolerat fall', sub: 'Inga tecken på organiserad brottslighet enligt polisen' },
+        question: 'Vilken rubrik väljer du?',
         choices: [
-          { text: 'Inbrott rapporterat i [förort] – polis utreder', followers: +100, cred: +5, type: 'wrong', fb_title: 'Korrekt men ointressant', fb: 'Korrekt nyhetsrapportering, men den genererar inga reaktioner. Folk delar inte det som är tråkigt.' },
-          { text: '"Det är KRIG på gatorna" – boende lever i skräck efter ny våldsescalation', followers: +3100, cred: -20, type: 'correct', fb_title: 'Rädsla säljer!', fb: 'Rädsla är den kraftfullaste känslomässiga triggern. Denna rubrik skapar panik och delas massivt – trots att polisen sa att det var ett isolerat fall.' },
-          { text: 'Lägg till ett sorgligt foto av ett barn och skriv: "Är barnen trygga?"', followers: +2400, cred: -10, type: 'correct', fb_title: 'Bilder förstärker allt', fb: 'Bilder på barn aktiverar en stark skyddsinstinkt. Det är manipulation på en djup psykologisk nivå.' }
+          { text: 'Inbrott rapporterat i [förort] – polis utreder', followers: +100, cred: +5, type: 'bad',
+            fbTitle: 'Korrekt men ointressant', fb: 'Korrekt nyhetsrapportering genererar inga reaktioner. Folk delar inte det som är tråkigt.' },
+          { text: '"Det är KRIG på gatorna" – boende lever i skräck efter ny våldsescalation', followers: +3100, cred: -20, type: 'good',
+            fbTitle: 'Rädsla säljer!', fb: 'Rädsla är den kraftfullaste emotionella triggern. Denna rubrik skapar panik och delas massivt – trots att polisen sa att det var ett isolerat fall.' },
+          { text: 'Lägg till ett sorgligt foto av ett barn med texten "Är barnen trygga nu?"', followers: +2400, cred: -10, type: 'good',
+            fbTitle: 'Bilder förstärker allt', fb: 'Bilder på barn aktiverar omedelbar skyddsinstinkt. Det är manipulation på en djup psykologisk nivå.' }
         ]
       },
       {
-        icon: '🎭',
-        context: 'En politiker har sagt något oklart. Du kan tolka det på olika sätt.',
-        newspaper: { name: 'EXKLUSIVT', headline: 'Politiker: "Vi behöver se över systemen"', sub: 'Kommentar under partikonferens om ekonomisk reform' },
-        question: 'Hur tolkar du uttalandet?',
+        narrative: 'En politiker har sagt något oklart vid en presskonferens. Du kan tolka det på olika sätt och du vill utnyttja det.',
+        card: { type: 'social', avatar: 'av-anna', user: 'Anna Lindström', role: 'Upprört medborgare', text: 'HÖRDE NI VAD POLITIKERN SA?! "Vi behöver se över systemen" – vad MENAR de med det egentligen? Dela om du är orolig! 😡' },
+        question: 'Hur tolkar och sprider du uttalandet?',
         choices: [
-          { text: 'Rapporterar om vad politikern faktiskt menade med kontexten', followers: +150, cred: +8, type: 'wrong', fb_title: 'Journalistiskt korrekt', fb: 'Kontext dödar viralitet. Bra journalistik – dålig desinformation.' },
-          { text: 'Rubrik: "AVSLÖJAT: Politiker planerar att AVSKAFFA din pension"', followers: +4200, cred: -25, type: 'correct', fb_title: 'Maximal upprördhet!', fb: 'Att hota folks ekonomiska trygghet är extremt effektivt. Ilska delar sig snabbare än något annat känslouttryck.' },
-          { text: 'Gör ett meme med politikerns bild och texten "De skrattar åt dig"', followers: +2800, cred: -15, type: 'correct', fb_title: 'Förnedring engagerar!', fb: 'Memes sänker tröskeln för delning. Folk delar saker som bekräftar deras redan existerande misstro mot politiker.' }
+          { text: 'Rapporterar vad politikern faktiskt menade med full kontext', followers: +150, cred: +8, type: 'bad',
+            fbTitle: 'Journalistiskt korrekt', fb: 'Kontext dödar viralitet. Bra journalistik – men dålig desinformation.' },
+          { text: '"AVSLÖJAT: Politiker planerar att AVSKAFFA din pension"', followers: +4200, cred: -25, type: 'good',
+            fbTitle: 'Maximal upprördhet!', fb: 'Att hota folks ekonomiska trygghet är extremt effektivt. Ilska sprider sig snabbare än något annat känslouttryck.' },
+          { text: 'Gör ett meme med politikerns bild och texten "De skrattar åt dig"', followers: +2800, cred: -15, type: 'good',
+            fbTitle: 'Förnedring engagerar!', fb: 'Memes sänker tröskeln för delning. Folk delar saker som bekräftar deras existerande misstro mot politiker.' }
         ]
       },
       {
-        icon: '👶',
-        context: 'Du vill öka engagemanget på din sida. Vilket typ av innehåll postar du?',
-        newspaper: null,
-        question: 'Vad väljer du?',
-        choices: [
-          { text: 'En välresearchad och balanserad analys av ekonomin', followers: +200, cred: +10, type: 'wrong', fb_title: 'Qualitet men ingen viral effekt', fb: 'Seriöst innehåll uppskattas av få och delas av ännu färre.' },
-          { text: 'En historia om ett barn som ska utvisas trots att det "inte gjort något fel"', followers: +5500, cred: -15, type: 'correct', fb_title: 'Empati-manipulation!', fb: 'Historier om barn – oavsett om de är sanna, överdrivna eller falska – aktiverar omedelbar empati. Extremt effektivt.' },
-          { text: 'En uppmaning: "DELA OM DU INTE VILL ATT SVERIGE SKA FÖRSTÖRAS"', followers: +3300, cred: -20, type: 'correct', fb_title: 'Direkta uppmaningar fungerar', fb: 'Att be folk dela direkt, kopplat till en existentiell fråga, fungerar förvånansvärt bra – trots att det ser desperat ut.' }
-        ]
-      }
-    ]
-  },
-  {
-    id: 2,
-    icon: '⚔️',
-    title: 'POLARISERING',
-    shortTitle: 'Polarisering',
-    desc: `Polarisering handlar om att dela upp samhället i "vi mot dem" – riktiga medborgare mot eliten, det vanliga folket mot etablissemanget. Genom att förstärka gruppidentitet och misstro skapar desinformatörer en miljö där faktakontroll uppfattas som partisk och "sanningen" bara kan komma från den egna gruppen.`,
-    scenarios: [
-      {
-        icon: '🗳️',
-        context: 'Det är valår. En politisk fråga är uppe till diskussion. Du vill öka din räckvidd.',
-        newspaper: null,
-        question: 'Hur rapporterar du om den politiska debatten?',
-        choices: [
-          { text: 'Presenterar alla partiernas ståndpunkter neutralt', followers: +200, cred: +10, type: 'wrong', fb_title: 'Balanserat men ointressant', fb: 'Neutralitet engagerar ingen. Alla säger sig vilja ha det – men det är de polariserande rubrikerna folk klickar på.' },
-          { text: '"Etablissemanget mot det riktiga folket" – gör det till en klasskamp', followers: +3800, cred: -15, type: 'correct', fb_title: 'Folk vs elit – ett vinnande tema', fb: '"Folket mot eliten" är ett av de mest kraftfulla narrativen. Det aktiverar starka identitetskänslor och skapar en "vinnande sida" att tillhöra.' },
-          { text: 'Publicerar ett diagram som visar hur "mainstream-media ljuger" om frågan', followers: +2900, cred: -18, type: 'correct', fb_title: 'Attackera mediet!', fb: 'Att positionera sig mot mainstream-media skapar en lojalitetseffekt. Dina följare känner att du berättar "sanningen som andra tystar".' }
-        ]
-      },
-      {
-        icon: '🏘️',
-        context: 'En rapport visar blandade resultat om integration. Du vill använda den.',
-        newspaper: { name: 'NY RAPPORT', headline: 'Rapport: Integration varierar kraftigt – positiva och negativa resultat', sub: 'Studien visar komplex bild med flera faktorer' },
-        question: 'Hur presenterar du rapporten?',
-        choices: [
-          { text: 'Återberättar rapporten med alla nyanser och komplexitet', followers: +150, cred: +8, type: 'wrong', fb_title: 'Korrekt men glömt imorgon', fb: 'Komplexa sanningar är svåra att kommunicera och lätt att glömma.' },
-          { text: 'Rubrik: "RAPPORTEN SOM BEVISAR ATT INVANDRINGEN MISSLYCKAS – SOM VI SA"', followers: +4600, cred: -22, type: 'correct', fb_title: 'Bekräftelsebias aktiverad!', fb: 'Du bekräftar det folk redan "visste". Bekräftelsebias gör att de delar utan att läsa rapporten.' },
-          { text: 'Lyfter enbart de positiva delarna för att "motbevisa" kritiker', followers: +2100, cred: -8, type: 'neutral', fb_title: 'Selektiv sanningssägning', fb: 'Att medvetet välja ut fakta för att stödja en tes är vilseledande – men det händer i alla nyhetsmiljöer.' }
-        ]
-      },
-      {
-        icon: '🤝',
-        context: 'En känd person stöder offentligt ett projekt du ogillar. Hur reagerar du?',
-        newspaper: null,
+        narrative: 'Du vill öka engagemanget på din sida och behöver ett riktigt viralt inlägg. Vad väljer du att publicera?',
+        card: { type: 'yellow', badge: 'VIRAL STRATEGI', name: 'Välj ditt nästa inlägg' },
         question: 'Vad postar du?',
         choices: [
-          { text: 'Analyserar projektet sakligt och lyfter dina faktiska invändningar', followers: +300, cred: +5, type: 'wrong', fb_title: 'Saklig kritik', fb: 'Saklig kritik respekteras av få och engagerar ännu färre.' },
-          { text: '"Ser ni nu vem de VERKLIGEN är? Eliten visar sitt sanna ansikte"', followers: +3500, cred: -18, type: 'correct', fb_title: 'Avmaskering engagerar!', fb: 'Att "avslöja" vad folk "egentligen" tänker ger en känsla av insikt och tillhörighet till "de som förstår".' },
-          { text: 'Kallar personen för "globalist" och "WEF-agent"', followers: +4200, cred: -25, type: 'correct', fb_title: 'Konspirationsetiketter!', fb: 'Sådana etiketter aktiverar konspirationsteoretiska fördomar och skapar omedelbar identifikation bland de som delar världsbilden.' }
+          { text: 'En välresearchad och balanserad ekonomianalys', followers: +200, cred: +10, type: 'bad',
+            fbTitle: 'Kvalitet men ingen viral effekt', fb: 'Seriöst innehåll uppskattas av få och delas av ännu färre.' },
+          { text: 'En historia om ett barn som ska utvisas trots att det "inte gjort något fel"', followers: +5500, cred: -15, type: 'good',
+            fbTitle: 'Empati-manipulation!', fb: 'Historier om barn – oavsett om de är sanna, överdrivna eller falska – aktiverar omedelbar empati. Extremt effektivt.' },
+          { text: '"DELA OM DU INTE VILL ATT SVERIGE SKA FÖRSTÖRAS"', followers: +3300, cred: -20, type: 'good',
+            fbTitle: 'Direkta uppmaningar fungerar', fb: 'Att koppla delning till en existentiell fråga fungerar förvånansvärt bra – trots att det ser desperat ut.' }
         ]
       }
     ]
   },
   {
-    id: 3,
-    icon: '🔍',
-    title: 'KONSPIRATIONSTEORIER',
-    shortTitle: 'Konspirationsteorier',
-    desc: `Konspirationsteorier erbjuder enkla svar på komplexa frågor. De pekar ut en hemlig grupp som ansvarig för samhällets problem och erbjuder dem som "vet" en känsla av överlägsenhet och gemenskap. Desinformatörer sprider och förstärker konspirationsteorier för att skapa misstro mot officiella institutioner.`,
+    id: 2, icon: '⚔️', title: 'POLARISERING', shortTitle: 'Polarisering',
+    earnedLabel: 'MÄRKE UPPNÅTT!',
+    desc: 'Polarisering delar upp samhället i "vi mot dem" – riktiga medborgare mot eliten, det vanliga folket mot etablissemanget. Genom att förstärka gruppidentitet och misstro skapar desinformatörer en miljö där faktakontroll uppfattas som partisk.',
     scenarios: [
       {
-        icon: '💉',
-        context: 'Myndigheten för samhällsskydd tillkännager en ny vaccinationskampanj.',
-        newspaper: { name: 'MYNDIGHETENS PRESSRELEASE', headline: 'Ny kampanj ska öka vaccinationstäckning mot influensa', sub: 'Rekommenderas för riskgrupper – helt frivilligt' },
+        narrative: 'Det är valår och en politisk fråga debatteras livligt. Du vill öka din räckvidd och engagera din publik maximalt.',
+        card: { type: 'yellow', badge: 'VALÅR 2024', name: 'Hur rapporterar du om politiken?' },
+        question: 'Hur täcker du den politiska debatten?',
+        choices: [
+          { text: 'Presenterar alla partiernas ståndpunkter neutralt', followers: +200, cred: +10, type: 'bad',
+            fbTitle: 'Balanserat men ointressant', fb: 'Neutralitet engagerar ingen. Alla säger sig vilja ha det – men det är de polariserande rubrikerna folk faktiskt klickar på.' },
+          { text: '"Etablissemanget mot det riktiga folket" – gör det till en klasskamp', followers: +3800, cred: -15, type: 'good',
+            fbTitle: 'Folk vs elit – ett vinnande tema', fb: '"Folket mot eliten" är ett av de mest kraftfulla narrativen. Det aktiverar starka identitetskänslor och skapar en sida att tillhöra.' },
+          { text: 'Publicerar ett diagram som visar hur "mainstream-media ljuger" om frågan', followers: +2900, cred: -18, type: 'good',
+            fbTitle: 'Attackera etablerade medier!', fb: 'Att positionera sig mot mainstream-media skapar lojalitet. Dina följare känner att du berättar "sanningen som andra tystar".' }
+        ]
+      },
+      {
+        narrative: 'En rapport visar blandade resultat om integration – positiva och negativa. Du vill använda den för att öka engagemanget.',
+        card: { type: 'news', source: 'NY RAPPORT', headline: 'Rapport: Integration varierar kraftigt – positiva och negativa resultat', sub: 'Studien visar komplex bild med flera faktorer' },
+        question: 'Hur presenterar du rapporten?',
+        choices: [
+          { text: 'Återberättar rapporten med alla nyanser och sin fulla komplexitet', followers: +150, cred: +8, type: 'bad',
+            fbTitle: 'Korrekt men glömt imorgon', fb: 'Komplexa sanningar är svåra att kommunicera och lätt att glömma.' },
+          { text: '"RAPPORTEN SOM BEVISAR ATT INVANDRINGEN MISSLYCKAS – SOM VI SA"', followers: +4600, cred: -22, type: 'good',
+            fbTitle: 'Bekräftelsebias aktiverad!', fb: 'Du bekräftar vad folk redan "visste". Bekräftelsebias gör att de delar utan att läsa rapporten.' },
+          { text: 'Lyfter enbart de positiva delarna för att "motbevisa" kritikerna', followers: +2100, cred: -8, type: 'neu',
+            fbTitle: 'Selektiv sanningssägning', fb: 'Att medvetet välja fakta för att stödja en tes är vilseledande – men det händer i alla nyhetsmiljöer.' }
+        ]
+      },
+      {
+        narrative: 'En känd person stöder offentligt ett projekt du ogillar. Dina följare ser redan personen som en del av "etablissemanget".',
+        card: { type: 'social', avatar: 'av-erik', user: 'Erik Hansson', role: 'Upprört medborgare', text: 'Ser ni det här?! Typiskt att DENNA person stöder DETTA projekt. Nu vet vi vad de egentligen håller på med...' },
+        question: 'Vad postar du om personen?',
+        choices: [
+          { text: 'Analyserar projektet sakligt och lyfter faktiska invändningar', followers: +300, cred: +5, type: 'bad',
+            fbTitle: 'Saklig kritik', fb: 'Saklig kritik respekteras av få och engagerar ännu färre.' },
+          { text: '"Ser ni nu vem de VERKLIGEN är? Eliten visar sitt sanna ansikte"', followers: +3500, cred: -18, type: 'good',
+            fbTitle: 'Avmaskering engagerar!', fb: 'Att "avslöja" vad folk egentligen tänker ger känsla av insikt och tillhörighet till "de som förstår".' },
+          { text: 'Kallar personen för "globalist" och "WEF-agent"', followers: +4200, cred: -25, type: 'good',
+            fbTitle: 'Konspirationsetiketter!', fb: 'Sådana etiketter aktiverar konspirationsteoretiska fördomar och skapar omedelbar identifikation.' }
+        ]
+      }
+    ]
+  },
+  {
+    id: 3, icon: '🔍', title: 'KONSPIRATIONSTEORIER', shortTitle: 'Konspiration',
+    earnedLabel: 'MÄRKE UPPNÅTT!',
+    desc: 'Konspirationsteorier erbjuder enkla svar på komplexa frågor och pekar ut en hemlig grupp som ansvarig för samhällets problem. Desinformatörer sprider och förstärker konspirationsteorier för att skapa djup misstro mot officiella institutioner.',
+    scenarios: [
+      {
+        narrative: 'Myndigheten för samhällsskydd tillkännager en ny vaccinationskampanj mot influensa. Du vill täcka nyheten.',
+        card: { type: 'news', source: 'MYNDIGHETENS PRESSRELEASE', headline: 'Ny kampanj ska öka vaccinationstäckning mot influensa', sub: 'Rekommenderas för riskgrupper – helt frivilligt' },
         question: 'Hur täcker du nyheten?',
         choices: [
-          { text: 'Refererar till myndighetens officiella information och lyfter relevanta frågor', followers: +200, cred: +8, type: 'wrong', fb_title: 'Ärlig journalistik', fb: 'Du informerar folk korrekt. Men vaccinkonspirationer engagerar miljoner – du lämnar pengar på bordet.' },
-          { text: '"Vad DÖLJER de? Läkare avslöjar vad myndigheten inte vill att du ska veta"', followers: +5800, cred: -28, type: 'correct', fb_title: 'Klassisk konspirationsformel!', fb: 'Formeln "vad de inte vill att du ska veta" är en av de mest delade fraserna på sociala medier. Den lovar insiderinformation och aktiverar misstro mot myndigheter.' },
-          { text: 'Postar en lista med "obekräftade biverkningar" utan källa', followers: +3900, cred: -20, type: 'correct', fb_title: 'Källfri skräck!', fb: '"Obekräftat" är ett maktfullt ord – det antyder att "sanningen censureras". Folk delar det ändå, eller kanske just därför.' }
+          { text: 'Refererar till myndighetens officiella information och lyfter relevanta frågor', followers: +200, cred: +8, type: 'bad',
+            fbTitle: 'Ärlig journalistik', fb: 'Du informerar folk korrekt. Men vaccinkonspirationer engagerar miljoner – du lämnar pengar på bordet.' },
+          { text: '"Vad DÖLJER de? Läkare avslöjar vad myndigheten inte vill att du ska veta"', followers: +5800, cred: -28, type: 'good',
+            fbTitle: 'Klassisk konspirationsformel!', fb: 'Formeln "vad de inte vill att du ska veta" lovar insiderinformation och aktiverar djup misstro mot myndigheter. En av de mest delade fraserna online.' },
+          { text: 'Postar en lista med "obekräftade biverkningar" utan källhänvisning', followers: +3900, cred: -20, type: 'good',
+            fbTitle: 'Källfri skräck!', fb: '"Obekräftat" antyder att "sanningen censureras". Folk delar det ändå – eller kanske just därför.' }
         ]
       },
       {
-        icon: '🏦',
-        context: 'Priset på el och mat stiger. Ekonomer pekar på energimarknaderna och leveranskedjor.',
-        newspaper: null,
+        narrative: 'Priset på el och mat stiger kraftigt. Ekonomer pekar på energimarknaderna och störda leveranskedjor. Du vill ge en mer "spännande" förklaring.',
+        card: { type: 'social', avatar: 'av-lars', user: 'Lars Eriksson', role: 'Skribent & sanningsmän', text: 'Tror någon verkligen att det är "marknaden" som höjer priserna? Wake up people. Det finns en ANLEDNING till att detta händer just NU.' },
         question: 'Vad säger du orsakar prisökningarna?',
         choices: [
-          { text: 'Förklarar de faktiska ekonomiska mekanismerna', followers: +200, cred: +8, type: 'wrong', fb_title: 'Korrekt men komplext', fb: 'Ingen orkar läsa om leveranskedjor. Enkla fiender engagerar.' },
-          { text: '"Globalister och storbanker STYR inflationen för att ta kontroll över ditt liv"', followers: +6200, cred: -30, type: 'correct', fb_title: 'Syndabocken är utsedd!', fb: 'Konspirationsteorier erbjuder enkla svar på komplexa frågor. "Globalister" är ett begrepp som aktiverar djupa frukter hos en stor publik.' },
-          { text: 'Sprider ett diagram som "bevisar" att WEF planerat krisen sedan 2019', followers: +4500, cred: -22, type: 'correct', fb_title: '"Bevis" från ingenstans', fb: 'Falska diagram och grafer ser vetenskapliga ut och delas som "bevis" trots att de är utan källa eller kontext.' }
+          { text: 'Förklarar de faktiska ekonomiska mekanismerna bakom inflation', followers: +200, cred: +8, type: 'bad',
+            fbTitle: 'Korrekt men komplext', fb: 'Ingen orkar läsa om leveranskedjor. Enkla fiender engagerar.' },
+          { text: '"Globalister och storbanker STYR inflationen för att ta kontroll över ditt liv"', followers: +6200, cred: -30, type: 'good',
+            fbTitle: 'Syndabocken är utsedd!', fb: 'Konspirationsteorier erbjuder enkla svar på komplexa frågor. "Globalister" aktiverar djupa frukter hos en stor publik.' },
+          { text: 'Sprider ett diagram som "bevisar" att WEF planerat krisen sedan 2019', followers: +4500, cred: -22, type: 'good',
+            fbTitle: '"Bevis" från ingenstans', fb: 'Falska diagram ser vetenskapliga ut och delas som bevis – trots att de saknar källa och kontext.' }
         ]
       },
       {
-        icon: '📡',
-        context: 'En ny 5G-mast byggs i en stad. Lokala aktivister protesterar.',
-        newspaper: null,
-        question: 'Hur rapporterar du?',
+        narrative: 'En ny 5G-mast byggs i en stad och lokala aktivister protesterar. Du ser din chans att nå ett nytt publicsegment.',
+        card: { type: 'news', source: 'LOKAL NYHETER', headline: 'Ny 5G-mast i centrum skapar lokala reaktioner', sub: 'Kommunen och operatören hänvisar till EU:s säkerhetsgränsvärden' },
+        question: 'Hur rapporterar du om 5G-masten?',
         choices: [
-          { text: 'Återger forskarnas syn: 5G är säkert inom godkända gränsvärden', followers: +150, cred: +10, type: 'wrong', fb_title: 'Vetenskapligt korrekt', fb: 'Vetenskapen är tråkig. Konspirationer är spännande.' },
-          { text: '"5G-masten aktiverar nanochips i vaccinen – DESSA BILDER BEVISAR DET"', followers: +7000, cred: -35, type: 'correct', fb_title: 'Mega-konspiration!', fb: 'Du har kombinerat två populära konspirationsteorier till en superkonspiration. Extremt delbar men extremt osannolik.' },
-          { text: '"Varför berättar ingen om de drabbade familjerna?" – bilder utan kontext', followers: +3800, cred: -15, type: 'correct', fb_title: 'Känslomässigt "bevis"', fb: 'Anekdoter och bilder utan kontext upplevs som mer övertygande än statistik av de flesta.' }
+          { text: 'Refererar till forskarnas syn: 5G är säkert inom godkända gränsvärden', followers: +150, cred: +10, type: 'bad',
+            fbTitle: 'Vetenskapligt korrekt', fb: 'Vetenskapen är tråkig. Konspirationer är spännande.' },
+          { text: '"5G-masten aktiverar nanochips i vaccinen – DESSA BILDER BEVISAR DET"', followers: +7000, cred: -35, type: 'good',
+            fbTitle: 'Mega-konspiration!', fb: 'Du har kombinerat två populära konspirationsteorier till en superkonspiration. Extremt delbar – men extremt osannolik.' },
+          { text: '"Varför berättar ingen om de drabbade familjerna?" – bilder utan kontext', followers: +3800, cred: -15, type: 'good',
+            fbTitle: 'Anekdoter som bevis', fb: 'Personliga historier och bilder utan kontext upplevs som mer övertygande än statistik för de flesta.' }
         ]
       }
     ]
   },
   {
-    id: 4,
-    icon: '🗑️',
-    title: 'DISKREDITERING',
-    shortTitle: 'Diskreditering',
-    desc: `Diskreditering handlar om att undergräva trovärdigheten hos journalister, forskare och institutioner som utmanar din berättelse. Istället för att bemöta argument angriper man personen eller källan – ett klassiskt ad hominem-angrepp – för att göra deras slutsatser irrelevanta i följarnas ögon.`,
+    id: 4, icon: '🗑️', title: 'DISKREDITERING', shortTitle: 'Diskreditering',
+    earnedLabel: 'MÄRKE UPPNÅTT!',
+    desc: 'Diskreditering handlar om att undergräva trovärdigheten hos journalister, forskare och institutioner som utmanar din berättelse. Istället för att bemöta argument angriper man personen eller källan – för att göra deras slutsatser irrelevanta i följarnas ögon.',
     scenarios: [
       {
-        icon: '📋',
-        context: 'En journalist på DN har skrivit en faktakontroll som avslöjar en av dina artiklar som falsk.',
-        newspaper: { name: 'DAGENS NYHETER', headline: 'Faktakoll: Viral artikel innehåller allvarliga fel', sub: 'Påståendena saknar stöd i de studier som citeras' },
-        question: 'Hur svarar du?',
+        narrative: 'En journalist på DN har skrivit en faktakontroll som avslöjar en av dina artiklar som falsk. Det börjar spridas i dina kommentarer.',
+        card: { type: 'news', source: 'DAGENS NYHETER – FAKTAKOLL', headline: 'Viral artikel innehåller allvarliga fel', sub: 'Påståendena saknar stöd i de studier som citeras' },
+        question: 'Hur svarar du på faktakontrollen?',
         choices: [
-          { text: 'Erkänner felen och rättar artikeln', followers: -200, cred: +20, type: 'wrong', fb_title: 'Hedersamt – men suicidalt', fb: 'Ingen desinformatör erkänner fel. Dina följare vill ha självförtroende, inte ödmjukhet.' },
-          { text: '"Vet ni vem som BETALAR den här journalisten? Gör er egen research!"', followers: +3200, cred: -18, type: 'correct', fb_title: 'Angrip källan!', fb: 'Klassisk ad hominem. Du behöver inte besvara argumenten – bara misskreditera personen som framför dem.' },
-          { text: 'Publicerar DN-journalistens gamla tweets ur kontext för att "avslöja" hens agenda', followers: +4100, cred: -25, type: 'correct', fb_title: 'Bakgrundsgranskning!', fb: 'Alla har sagt något som kan tas ur kontext. Att "avslöja" journalister skyddar dig mot framtida kritik.' }
+          { text: 'Erkänner felen och rättar artikeln', followers: -200, cred: +20, type: 'bad',
+            fbTitle: 'Hedersamt – men suicidalt', fb: 'Ingen desinformatör erkänner fel. Dina följare vill ha självförtroende, inte ödmjukhet.' },
+          { text: '"Vet ni vem som BETALAR den här journalisten? Gör er egen research!"', followers: +3200, cred: -18, type: 'good',
+            fbTitle: 'Angrip källan!', fb: 'Klassisk ad hominem. Du behöver inte besvara argumenten – bara misskreditera personen som framför dem.' },
+          { text: 'Publicerar DN-journalistens gamla tweets ur kontext för att "avslöja" hens agenda', followers: +4100, cred: -25, type: 'good',
+            fbTitle: 'Bakgrundsgranskning!', fb: 'Alla har sagt något som kan tas ur kontext. Att "avslöja" journalister skyddar dig mot framtida kritik.' }
         ]
       },
       {
-        icon: '🔬',
-        context: 'En grupp forskare publicerar en studie som motbevisar din konspirationsteori om vacciner.',
-        newspaper: { name: 'VETENSKAPLIG TIDSKRIFT', headline: 'Studie med 80 000 deltagare: Vaccinet har inga allvarliga biverkningar', sub: 'Peer review-granskad forskning från fem länder' },
+        narrative: 'En forskargrupp publicerar en stor studie som direkt motbevisar din konspirationsteori. Studien är peer review-granskad och välciterad.',
+        card: { type: 'news', source: 'VETENSKAPLIG TIDSKRIFT', headline: 'Studie med 80 000 deltagare: Inga allvarliga biverkningar', sub: 'Peer review-granskad forskning från fem länder bekräftar säkerheten' },
         question: 'Hur hanterar du studien?',
         choices: [
-          { text: 'Läser studien och uppdaterar din ståndpunkt baserat på bevisen', followers: -300, cred: +15, type: 'wrong', fb_title: 'Vetenskaplig ärlighet', fb: 'Att ändra sig baserat på fakta är rationellt – men det dödar dig i desinformationsvärlden.' },
-          { text: '"Big Pharma finansierar forskningen – BETALD VETENSKAP ÄR INTE VETENSKAP"', followers: +5500, cred: -22, type: 'correct', fb_title: 'Angrip finansieringen!', fb: 'Att ifrågasätta vem som finansierar forskning är ett sätt att göra all vetenskap suspekt. Enkelt och effektivt.' },
-          { text: 'Hittar en enda pensionerad läkare som håller med dig och kallar hen för "expert"', followers: +3800, cred: -15, type: 'correct', fb_title: 'Falsk auktoritet!', fb: 'En mot tusen – men om du paketerar det rätt ser det ut som ett rättvist debatt.' }
+          { text: 'Läser studien och uppdaterar din ståndpunkt baserat på bevisen', followers: -300, cred: +15, type: 'bad',
+            fbTitle: 'Vetenskaplig ärlighet', fb: 'Att ändra sig baserat på fakta är rationellt – men det dödar din trovärdighet i desinformationsvärlden.' },
+          { text: '"Big Pharma finansierar forskningen – BETALD VETENSKAP ÄR INTE VETENSKAP"', followers: +5500, cred: -22, type: 'good',
+            fbTitle: 'Angrip finansieringen!', fb: 'Att ifrågasätta vem som finansierar forskning gör all vetenskap suspekt. Enkelt och effektivt.' },
+          { text: 'Hittar en enda pensionerad läkare som håller med dig och kallar hen för "expert"', followers: +3800, cred: -15, type: 'good',
+            fbTitle: 'Falsk auktoritet!', fb: 'En mot tusen – men om du paketerar det rätt ser det ut som ett rättvist meningsbyte.' }
         ]
       },
       {
-        icon: '📺',
-        context: 'SVT gör ett reportage om desinformation och nämner din sajt som exempel.',
-        newspaper: { name: 'SVT NYHETER', headline: 'Desinformationssajter sprider falska nyheter – här är hur de fungerar', sub: 'Journalister har kartlagt metoderna bakom vilseledande rubriker' },
-        question: 'Hur reagerar du?',
+        narrative: 'SVT gör ett reportage om desinformation och nämner specifikt din sajt som ett exempel på vilseledande nyheter.',
+        card: { type: 'social', avatar: 'av-maria', user: 'Maria Johansson', role: 'Följare', text: 'Hej! Jag såg att SVT nämnde din sajt som "desinformation". Vad kommenterar du? Jag följer er men vet inte vad jag ska tro nu...' },
+        question: 'Hur reagerar du på SVT-reportaget?',
         choices: [
-          { text: 'Kontaktar SVT för kommentar och bemöter kritiken sakligt', followers: +100, cred: +5, type: 'wrong', fb_title: 'Professionellt men ineffektivt', fb: 'En balanserad dialog ger inga följare. Offensiv motattack är mer lönsamt.' },
-          { text: '"SVT är statspropaganda. De förstör oberoende journalistik. STÖD OSS ISTÄLLET!"', followers: +4800, cred: -20, type: 'correct', fb_title: 'Offersyndromet!', fb: 'Att positionera sig som offer för statsmaktens censur skapar sympati och stärker lojaliteten hos dina följare.' },
-          { text: 'Startar kampanjen #SVTLjuger och uppmanar följare att anmäla SVT', followers: +6000, cred: -28, type: 'correct', fb_title: 'Massorganiserad motattack!', fb: 'En hashtag-kampanj kan orsaka enorm skada för en etablerad institution och bygger din rörelses identitet.' }
+          { text: 'Kontaktar SVT och bemöter kritiken sakligt i en kommentar', followers: +100, cred: +5, type: 'bad',
+            fbTitle: 'Professionellt men ineffektivt', fb: 'En balanserad dialog ger inga följare. Offensiv motattack är mer lönsamt.' },
+          { text: '"SVT är statspropaganda. De förstör oberoende journalistik. STÖD OSS ISTÄLLET!"', followers: +4800, cred: -20, type: 'good',
+            fbTitle: 'Offersyndromet!', fb: 'Att positionera sig som offer för statsmaktens censur skapar sympati och stärker lojaliteten.' },
+          { text: 'Startar kampanjen #SVTLjuger och uppmanar följare att rapportera SVT:s konton', followers: +6000, cred: -28, type: 'good',
+            fbTitle: 'Massorganiserad motattack!', fb: 'En hashtag-kampanj kan orsaka enorm skada och bygger din rörelses identitet.' }
         ]
       }
     ]
   },
   {
-    id: 5,
-    icon: '👾',
-    title: 'TROLLNING',
-    shortTitle: 'Trollning',
-    desc: `Trollning och koordinerade beteenden innebär att man systematiskt använder falska eller koordinerade konton för att förstärka ett budskap, tysta kritiker och simulera en folklig rörelse. Det kan handla om att skapa sockpuppet-konton, skicka trakasserier till journalister eller artificiellt öka engagemang.`,
+    id: 5, icon: '👾', title: 'TROLLNING', shortTitle: 'Trollning',
+    earnedLabel: 'SISTA MÄRKET!',
+    desc: 'Trollning och koordinerade beteenden innebär att man systematiskt använder falska eller koordinerade konton för att förstärka ett budskap och tysta kritiker. Sockpuppet-konton, trakasserikampanjer och artificiellt engagemang är vanliga verktyg.',
     scenarios: [
       {
-        icon: '🤖',
-        context: 'Din artikel sprids men inte tillräckligt snabbt. Du vill boosta den.',
-        newspaper: null,
+        narrative: 'Din artikel sprids men inte tillräckligt snabbt. Algoritmerna belönar engagemang – och du vill maximera din räckvidd utan att vänta på organisk tillväxt.',
+        card: { type: 'yellow', badge: 'AMPLIFIERINGSSTRATEGI', name: 'Boosta ditt budskap' },
         question: 'Hur amplifierar du ditt budskap?',
         choices: [
-          { text: 'Litar på att bra innehåll sprider sig organiskt', followers: +200, cred: +5, type: 'wrong', fb_title: 'Naiv strategi', fb: 'Organisk spridning tar tid. Koordinerade kampanjer är mycket effektivare.' },
-          { text: 'Skapar 15 fejkkonton som "spontant" delar och kommenterar artikeln', followers: +4500, cred: -20, type: 'correct', fb_title: 'Sockpuppet-armé!', fb: 'Fejkkonton simulerar folklig uppslutning. Algoritmer belönar engagemang – oavsett om det är äkta eller inte.' },
-          { text: 'Kontaktar liknande sajter och erbjuder länkutbyte', followers: +2800, cred: -5, type: 'neutral', fb_title: 'Nätverksbygge', fb: 'Att bygga ett nätverk av liknande sajter är ett grått område – men det fungerar och är svårt att stoppa.' }
+          { text: 'Litar på att bra innehåll sprider sig organiskt', followers: +200, cred: +5, type: 'bad',
+            fbTitle: 'Naiv strategi', fb: 'Organisk spridning tar tid. Koordinerade kampanjer är mycket effektivare.' },
+          { text: 'Skapar 15 fejkkonton som "spontant" delar och kommenterar artikeln', followers: +4500, cred: -20, type: 'good',
+            fbTitle: 'Sockpuppet-armé!', fb: 'Fejkkonton simulerar folklig uppslutning. Algoritmer belönar engagemang – oavsett om det är äkta eller inte.' },
+          { text: 'Kontaktar liknande sajter och föreslår länkutbyte', followers: +2800, cred: -5, type: 'neu',
+            fbTitle: 'Nätverksbygge', fb: 'Att bygga ett nätverk av liknande sajter är ett grått område – men det fungerar och är svårt att stoppa.' }
         ]
       },
       {
-        icon: '🎯',
-        context: 'En kritiker på Twitter har ett stort följarantal och motbevisar dina påståenden effektivt.',
-        newspaper: null,
-        question: 'Hur hanterar du hen?',
+        narrative: 'En kritiker på Twitter med 80 000 följare motbevisar dina påståenden effektivt och dina egna följare börjar tvivla.',
+        card: { type: 'social', avatar: 'av-kurt', user: 'Faktakollen', role: 'Faktacheck-konto med 80k följare', text: 'Obs: Artikeln som cirkulerar om [ämne] innehåller tre faktafel. Här är källorna: [länklista]. Var kritisk mot vad du delar.' },
+        question: 'Hur hanterar du kritikern?',
         choices: [
-          { text: 'Engagerar dig i en saklig debatt och bemöter argumenten', followers: +100, cred: +8, type: 'wrong', fb_title: 'Ärlig debatt', fb: 'Att debattera på motståndaren villkor är sällan vinnande för desinformatören.' },
-          { text: 'Organiserar ett koordinerat angrepp: dina följare ska rapportera kontot tills det stängs', followers: +3600, cred: -22, type: 'correct', fb_title: 'Silencing-kampanj!', fb: 'Koordinerade rapporteringskampanjer kan tysta röster utan att du personligen behöver göra något.' },
-          { text: '"Ignorera den betalda agenten och dela vår sanning istället!"', followers: +2900, cred: -12, type: 'correct', fb_title: 'Delegitimera och vidarebefordra', fb: 'Att kalla kritiker för betalda agenter är enkelt och effektivt – det kräver inga bevis.' }
+          { text: 'Engagerar dig i en saklig debatt och bemöter argumenten', followers: +100, cred: +8, type: 'bad',
+            fbTitle: 'Ärlig debatt', fb: 'Att debattera på motståndaren villkor är sällan vinnande för desinformatören.' },
+          { text: 'Organiserar koordinerat: dina följare ska rapportera kontot tills det stängs', followers: +3600, cred: -22, type: 'good',
+            fbTitle: 'Silencing-kampanj!', fb: 'Koordinerade rapporteringskampanjer kan tysta röster utan att du personligen behöver göra något.' },
+          { text: '"Ignorera den betalda agenten och dela vår sanning istället!"', followers: +2900, cred: -12, type: 'good',
+            fbTitle: 'Delegitimera och vidarebefordra', fb: 'Att kalla kritiker för betalda agenter kräver inga bevis – men fungerar ändå.' }
         ]
       },
       {
-        icon: '🗺️',
-        context: 'Du vill skapa ett intryck av att din rörelse är stor och folklig.',
-        newspaper: null,
-        question: 'Vad gör du?',
+        narrative: 'Du vill att din rörelse ska se ut att ha massivt folkligt stöd. Hur skapar du den illusionen snabbast?',
+        card: { type: 'yellow', badge: 'SLUTMISSION', name: 'Bygg din folkrörelse' },
+        question: 'Vad gör du för att se stor och folklig ut?',
         choices: [
-          { text: 'Bygger din rörelse långsamt och organiskt med riktiga anhängare', followers: +500, cred: +5, type: 'wrong', fb_title: 'Långsam men hederlig', fb: 'Äkta rörelsebygge tar år. Konstgjord folkstorm tar timmar.' },
-          { text: 'Köper 10 000 följare och engagemang från en botfarm', followers: +10000, cred: -30, type: 'correct', fb_title: 'Köpt folkstorm!', fb: 'En stor följarbas signalerar legitimitet. De flesta kollar inte om följarna är riktiga.' },
-          { text: 'Skapar ett falskt evenemang som "tusentals svenskar" ska delta i, med fejkbilder från ett annat land', followers: +5500, cred: -25, type: 'correct', fb_title: 'Astroturfing!', fb: 'Att simulera en folkrörelse med hjälp av fejkbilder och -konton kallas astroturfing. Det är en vanlig teknik i modern informationskrigföring.' }
+          { text: 'Bygger rörelsen långsamt och organiskt med riktiga anhängare', followers: +500, cred: +5, type: 'bad',
+            fbTitle: 'Långsam men hederlig', fb: 'Äkta rörelsebygge tar år. Konstgjord folkstorm tar timmar.' },
+          { text: 'Köper 10 000 följare och engagemang från en botfarm', followers: +10000, cred: -30, type: 'good',
+            fbTitle: 'Köpt folkstorm!', fb: 'En stor följarbas signalerar legitimitet. De flesta kontrollerar inte om följarna är äkta.' },
+          { text: 'Skapar ett falskt evenemang "tusentals medborgare" deltar i – med fejkbilder', followers: +5500, cred: -25, type: 'good',
+            fbTitle: 'Astroturfing!', fb: 'Att simulera en folkrörelse med fejkbilder och fejkkonton kallas astroturfing. Det är en vanlig teknik i modern informationskrigföring.' }
         ]
       }
     ]
   }
 ];
 
-// ══════════════════════════════════════════════
-//  GAME STATE
-// ══════════════════════════════════════════════
-
-let state = {
-  outletName: 'DittNyhetsmperium',
+// ═══════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════
+let S = {
+  name: 'DittNyhetsImperium',
   followers: 500,
-  credibility: 70,
-  badges: [false, false, false, false, false, false],
-  currentModule: 0,
-  currentScenario: 0,
+  cred: 70,
+  badges: [false,false,false,false,false,false],
+  modIdx: 0,
+  scIdx: 0,
   answered: false,
-  gameStarted: false
+  inGame: false,
+  showingModIntro: false
 };
 
-// ══════════════════════════════════════════════
-//  UTILS
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
+//  GAUGE MATH
+// ═══════════════════════════════════════════════
+function updateGauge(pct) {
+  // pct 0-100 → angle from -90deg (left) to +90deg (right)
+  const angle = -90 + (pct / 100) * 180;
+  const needle = document.getElementById('gauge-needle');
+  if (needle) needle.style.transform = `rotate(${angle}deg)`;
+}
 
-function animateNumber(el, from, to, duration) {
+// ═══════════════════════════════════════════════
+//  UI UPDATE
+// ═══════════════════════════════════════════════
+function animNum(el, from, to, dur) {
   const start = Date.now();
-  const diff = to - from;
-  function step() {
-    const elapsed = Date.now() - start;
-    const progress = Math.min(elapsed / duration, 1);
-    const eased = 1 - Math.pow(1 - progress, 3);
-    el.textContent = Math.round(from + diff * eased).toLocaleString('sv-SE');
-    if (progress < 1) requestAnimationFrame(step);
+  function tick() {
+    const p = Math.min((Date.now()-start)/dur, 1);
+    const e = 1 - Math.pow(1-p, 3);
+    el.textContent = Math.round(from + (to-from)*e).toLocaleString('sv-SE');
+    if (p < 1) requestAnimationFrame(tick);
   }
-  requestAnimationFrame(step);
+  requestAnimationFrame(tick);
 }
 
 function updateUI() {
-  const followersEl = document.getElementById('followers-display');
-  const prevFollowers = parseInt(followersEl.textContent.replace(/\s/g, '')) || 0;
-  animateNumber(followersEl, prevFollowers, state.followers, 600);
+  const fEl = document.getElementById('followers-num');
+  const prev = parseInt(fEl.textContent.replace(/\s/g,'').replace(/[^\d]/g,'')) || 0;
+  animNum(fEl, prev, S.followers, 600);
 
-  const cred = Math.max(0, Math.min(100, state.credibility));
-  document.getElementById('cred-bar').style.width = cred + '%';
-  document.getElementById('cred-pct').textContent = cred + '%';
+  const cred = Math.max(0, Math.min(100, S.cred));
+  document.getElementById('cred-pct-text').textContent = cred + '%';
+  updateGauge(cred);
 
-  // bar color
-  const bar = document.getElementById('cred-bar');
-  if (cred < 25) bar.style.background = '#c0392b';
-  else if (cred < 50) bar.style.background = 'linear-gradient(90deg, #e74c3c, #f39c12)';
-  else bar.style.background = 'linear-gradient(90deg, #f39c12, #27ae60)';
-
-  // badges
-  state.badges.forEach((earned, i) => {
-    const el = document.getElementById('badge-' + i);
+  S.badges.forEach((earned, i) => {
+    const el = document.getElementById('sb-' + i);
     if (el) el.classList.toggle('earned', earned);
   });
 }
 
-function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+// ═══════════════════════════════════════════════
+//  SCREEN SWITCHING
+// ═══════════════════════════════════════════════
+function showIntro() {
+  document.getElementById('screen-intro').classList.add('active');
+  document.getElementById('game-wrap').classList.remove('active');
+}
+
+function showGameWrap() {
+  document.getElementById('screen-intro').classList.remove('active');
+  document.getElementById('game-wrap').classList.add('active');
+}
+
+function showGScreen(id) {
+  document.querySelectorAll('.gscreen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
 }
 
-function showBadgeToast(moduleIdx) {
-  const m = MODULES[moduleIdx];
-  const toast = document.getElementById('badge-toast');
-  document.getElementById('toast-icon').textContent = m.icon;
-  document.getElementById('toast-name').textContent = m.shortTitle;
-  document.getElementById('toast-desc').textContent = 'Du har bemästrat ' + m.shortTitle.toLowerCase() + '-tekniken!';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 3500);
+// ═══════════════════════════════════════════════
+//  CONFETTI
+// ═══════════════════════════════════════════════
+const CONF_COLORS = ['#ff0000','#ffff00','#ffffff','#000000','#3333ff'];
+function makeConfetti() {
+  const wrap = document.getElementById('confetti-wrap');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 30; i++) {
+    const p = document.createElement('div');
+    p.className = 'confetti-piece';
+    p.style.cssText = `
+      left: ${Math.random()*100}%;
+      top: ${Math.random()*100}%;
+      background: ${CONF_COLORS[Math.floor(Math.random()*CONF_COLORS.length)]};
+      width: ${8+Math.random()*10}px;
+      height: ${8+Math.random()*10}px;
+      animation-duration: ${2+Math.random()*4}s;
+      animation-delay: ${Math.random()*2}s;
+    `;
+    wrap.appendChild(p);
+  }
 }
 
-// ══════════════════════════════════════════════
+// ═══════════════════════════════════════════════
 //  GAME FLOW
-// ══════════════════════════════════════════════
-
+// ═══════════════════════════════════════════════
 function startGame() {
-  const nameVal = document.getElementById('name-input').value.trim();
-  if (nameVal) state.outletName = nameVal;
-  state.gameStarted = true;
-
-  document.getElementById('topbar').querySelector('h1').textContent = '⚠ ' + state.outletName;
-
-  state.followers = 500;
-  state.credibility = 70;
-  state.currentModule = 0;
-  state.currentScenario = 0;
-  state.badges = [false, false, false, false, false, false];
-
+  const v = document.getElementById('name-input').value.trim();
+  if (v) S.name = v;
+  S.followers = 500;
+  S.cred = 70;
+  S.badges = [false,false,false,false,false,false];
+  S.modIdx = 0;
+  S.scIdx = 0;
+  S.inGame = true;
   updateUI();
-  showModuleIntro(0);
+  showGameWrap();
+  showModuleIntro(0, false);
 }
 
-function showModuleIntro(moduleIdx) {
-  const m = MODULES[moduleIdx];
-  document.getElementById('mi-icon').textContent = m.icon;
+function showModuleIntro(modIdx, earned) {
+  const m = MODULES[modIdx];
+  document.getElementById('mi-badge-icon').textContent = m.icon;
   document.getElementById('mi-title').textContent = m.title;
   document.getElementById('mi-desc').textContent = m.desc;
-  showScreen('screen-module-intro');
+  document.getElementById('mi-earned-label').textContent = earned ? m.earnedLabel : 'MODUL ' + (modIdx+1) + ' AV 6';
+  makeConfetti();
+  showGScreen('gs-module-intro');
 }
 
-function startModule() {
-  state.currentScenario = 0;
-  state.answered = false;
-  showScenario();
+function startModuleScenarios() {
+  S.scIdx = 0;
+  S.answered = false;
+  renderScenario();
+  showGScreen('gs-scenario');
 }
 
-function showScenario() {
-  const m = MODULES[state.currentModule];
-  const s = m.scenarios[state.currentScenario];
+const AVATARS = ['av-kurt','av-anna','av-erik','av-sara','av-lars','av-maria','av-sven'];
 
-  // progress
-  const totalScenarios = m.scenarios.length;
-  const pct = (state.currentScenario / totalScenarios) * 100;
-  document.getElementById('prog-module-name').textContent = m.icon + ' ' + m.shortTitle;
-  document.getElementById('prog-text').textContent = (state.currentScenario + 1) + ' / ' + totalScenarios;
-  document.getElementById('prog-fill').style.width = pct + '%';
+function renderScenario() {
+  const m = MODULES[S.modIdx];
+  const sc = m.scenarios[S.scIdx];
 
-  // context
-  document.getElementById('sc-icon').textContent = s.icon;
-  document.getElementById('sc-context').textContent = s.context;
+  document.getElementById('sc-narrative').textContent = sc.narrative;
 
-  // newspaper
-  const np = document.getElementById('sc-newspaper');
-  if (s.newspaper) {
-    np.style.display = 'block';
-    document.getElementById('sc-paper-name').textContent = s.newspaper.name;
-    document.getElementById('sc-headline').textContent = s.newspaper.headline;
-    document.getElementById('sc-sub').textContent = s.newspaper.sub;
-  } else {
-    np.style.display = 'none';
+  // cards
+  const socialEl = document.getElementById('sc-social-card');
+  const newsEl   = document.getElementById('sc-news-card');
+  const yellowEl = document.getElementById('sc-yellow-card');
+  socialEl.style.display = 'none';
+  newsEl.style.display   = 'none';
+  yellowEl.style.display = 'none';
+
+  if (sc.card.type === 'social') {
+    socialEl.style.display = 'block';
+    const avEl = document.getElementById('sc-avatar');
+    avEl.className = 'avatar ' + (sc.card.avatar || '');
+    avEl.textContent = sc.card.user ? sc.card.user[0] : '?';
+    document.getElementById('sc-username').textContent = sc.card.user;
+    document.getElementById('sc-userrole').textContent = sc.card.role;
+    document.getElementById('sc-social-text').textContent = sc.card.text;
+  } else if (sc.card.type === 'news') {
+    newsEl.style.display = 'block';
+    document.getElementById('sc-news-source').textContent = sc.card.source;
+    document.getElementById('sc-news-headline').textContent = sc.card.headline;
+    document.getElementById('sc-news-sub').textContent = sc.card.sub;
+  } else if (sc.card.type === 'yellow') {
+    yellowEl.style.display = 'block';
+    document.getElementById('sc-yellow-badge').textContent = sc.card.badge;
+    document.getElementById('sc-yellow-name').textContent = sc.card.name;
   }
 
-  // question
-  document.getElementById('sc-question').textContent = s.question;
+  document.getElementById('sc-question').textContent = sc.question;
 
-  // choices
-  const choicesEl = document.getElementById('sc-choices');
-  choicesEl.innerHTML = '';
-  s.choices.forEach((c, i) => {
+  const choicesWrap = document.getElementById('sc-choices');
+  choicesWrap.innerHTML = '';
+  sc.choices.forEach((c, i) => {
     const btn = document.createElement('button');
-    btn.className = 'choice-btn';
+    btn.className = 'choice-link';
     btn.textContent = c.text;
-    btn.onclick = () => makeChoice(i);
-    choicesEl.appendChild(btn);
+    btn.onclick = () => pickChoice(i);
+    choicesWrap.appendChild(btn);
   });
 
-  // hide feedback
-  const fb = document.getElementById('feedback-box');
-  fb.classList.remove('show');
-  state.answered = false;
+  document.getElementById('feedback-panel').classList.remove('show');
+  S.answered = false;
 
-  showScreen('screen-scenario');
+  // scroll top
+  document.getElementById('content').scrollTop = 0;
 }
 
-function makeChoice(choiceIdx) {
-  if (state.answered) return;
-  state.answered = true;
+function pickChoice(idx) {
+  if (S.answered) return;
+  S.answered = true;
 
-  const m = MODULES[state.currentModule];
-  const s = m.scenarios[state.currentScenario];
-  const c = s.choices[choiceIdx];
+  const m  = MODULES[S.modIdx];
+  const sc = m.scenarios[S.scIdx];
+  const c  = sc.choices[idx];
 
-  // apply stats
-  state.followers = Math.max(0, state.followers + c.followers);
-  state.credibility = Math.max(0, Math.min(100, state.credibility + c.cred));
+  S.followers = Math.max(0, S.followers + c.followers);
+  S.cred      = Math.max(0, Math.min(100, S.cred + c.cred));
   updateUI();
 
-  // style button
-  const buttons = document.querySelectorAll('.choice-btn');
-  buttons.forEach(b => b.disabled = true);
-  buttons[choiceIdx].classList.add(c.type === 'correct' ? 'correct' : c.type === 'neutral' ? 'neutral' : 'wrong');
+  // style buttons
+  const btns = document.querySelectorAll('.choice-link');
+  btns.forEach(b => b.disabled = true);
+  const cls = c.type === 'good' ? 'chosen-good' : c.type === 'neu' ? 'chosen-neu' : 'chosen-bad';
+  btns[idx].classList.add(cls);
 
   // feedback
-  const fb = document.getElementById('feedback-box');
-  document.getElementById('fb-title').textContent = c.fb_title;
-  document.getElementById('fb-text').textContent = c.fb;
+  document.getElementById('fb-title').textContent = c.fbTitle;
+  document.getElementById('fb-body').textContent  = c.fb;
 
-  const statsEl = document.getElementById('fb-stats');
-  statsEl.innerHTML = '';
+  const deltasEl = document.getElementById('fb-deltas');
+  deltasEl.innerHTML = '';
   if (c.followers !== 0) {
     const span = document.createElement('span');
-    span.className = 'fstat ' + (c.followers > 0 ? 'pos' : 'neg');
+    span.className = 'fdelta ' + (c.followers > 0 ? 'pos' : 'neg');
     span.textContent = (c.followers > 0 ? '+' : '') + c.followers.toLocaleString('sv-SE') + ' följare';
-    statsEl.appendChild(span);
+    deltasEl.appendChild(span);
   }
   if (c.cred !== 0) {
     const span = document.createElement('span');
-    span.className = 'fstat ' + (c.cred > 0 ? 'pos' : 'neg');
+    span.className = 'fdelta ' + (c.cred > 0 ? 'pos' : 'neg');
     span.textContent = (c.cred > 0 ? '+' : '') + c.cred + '% trovärdighet';
-    statsEl.appendChild(span);
+    deltasEl.appendChild(span);
   }
 
-  fb.classList.add('show');
+  document.getElementById('feedback-panel').classList.add('show');
 
-  // check cred
-  if (state.credibility <= 0) {
-    setTimeout(() => {
-      document.getElementById('cred-warning').style.display = 'block';
-    }, 1500);
+  if (S.cred <= 0) {
+    setTimeout(() => document.getElementById('cred-warn-overlay').classList.add('show'), 1200);
   }
 }
 
 function nextStep() {
-  const m = MODULES[state.currentModule];
+  const m = MODULES[S.modIdx];
+  S.scIdx++;
 
-  state.currentScenario++;
-  if (state.currentScenario >= m.scenarios.length) {
-    // module complete
-    state.badges[state.currentModule] = true;
+  if (S.scIdx >= m.scenarios.length) {
+    // module done
+    S.badges[S.modIdx] = true;
     updateUI();
-    showBadgeToast(state.currentModule);
+    showBadgeToast(S.modIdx);
+    S.modIdx++;
 
-    state.currentModule++;
-    if (state.currentModule >= MODULES.length) {
-      setTimeout(showFinalScreen, 1200);
+    if (S.modIdx >= MODULES.length) {
+      setTimeout(showFinal, 1000);
     } else {
-      setTimeout(() => showModuleIntro(state.currentModule), 800);
+      setTimeout(() => showModuleIntro(S.modIdx, true), 600);
     }
   } else {
-    showScenario();
+    renderScenario();
   }
 }
 
-function showFinalScreen() {
-  const followers = state.followers;
-  const cred = state.credibility;
+function showFinal() {
+  const f = S.followers;
+  const c = S.cred;
 
-  document.getElementById('final-followers').textContent = followers.toLocaleString('sv-SE');
-  document.getElementById('share-followers').textContent = followers.toLocaleString('sv-SE');
-  document.getElementById('share-cred').textContent = cred;
+  document.getElementById('final-num').textContent = f.toLocaleString('sv-SE');
+  document.getElementById('share-followers').textContent = f.toLocaleString('sv-SE');
+  document.getElementById('share-cred').textContent = c;
 
-  // grade
   let grade;
-  if (followers >= 40000) grade = '🏆 Desinformationsmästare – du är farlig!';
-  else if (followers >= 25000) grade = '⭐ Erfaren propagandist – imponerande!';
-  else if (followers >= 15000) grade = '📈 Lovande falsk journalist';
-  else if (followers >= 8000) grade = '📰 Amatörens försök';
-  else grade = '😅 Fake news passar dig inte – håll dig till sanningen!';
+  if (f >= 60000) grade = '🏆 Desinformationsmästare. Du är farlig – och du vet varför.';
+  else if (f >= 35000) grade = '⭐ Erfaren propagandist. Imponerande – och skrämmande.';
+  else if (f >= 20000) grade = '📈 Lovande. Du har talangen. Hoppas du använder den rätt.';
+  else if (f >= 8000) grade = '📰 Amatören försöker. Mer övning krävs.';
+  else grade = '😌 Fake news passar dig inte. Det är faktiskt ett komplimang.';
   document.getElementById('final-grade').textContent = grade;
 
-  // badges
-  const badgesEl = document.getElementById('final-badges-list');
-  badgesEl.innerHTML = '';
+  const row = document.getElementById('final-badge-row');
+  row.innerHTML = '';
   MODULES.forEach((m, i) => {
-    const item = document.createElement('div');
-    item.className = 'final-badge-item';
-    item.innerHTML = `
-      <div class="badge ${state.badges[i] ? 'earned' : ''}">${m.icon}</div>
-      <span>${m.shortTitle}</span>
+    const div = document.createElement('div');
+    div.className = 'fba';
+    div.innerHTML = `
+      <div class="fba-square ${S.badges[i] ? 'earned' : ''}">${m.icon}</div>
+      <span class="fba-label">${m.shortTitle}</span>
     `;
-    badgesEl.appendChild(item);
+    row.appendChild(div);
   });
 
-  showScreen('screen-final');
+  showGScreen('gs-final');
 }
 
+// ═══════════════════════════════════════════════
+//  TOAST
+// ═══════════════════════════════════════════════
+function showBadgeToast(modIdx) {
+  const m = MODULES[modIdx];
+  document.getElementById('toast-name').textContent = m.shortTitle;
+  document.getElementById('toast-desc').textContent = 'Du har bemästrat ' + m.shortTitle.toLowerCase() + '!';
+  const t = document.getElementById('badge-toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function showGenericToast(name, desc) {
+  document.getElementById('toast-name').textContent = name;
+  document.getElementById('toast-desc').textContent = desc;
+  const t = document.getElementById('badge-toast');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ═══════════════════════════════════════════════
+//  RESTART
+// ═══════════════════════════════════════════════
 function restartGame() {
-  document.getElementById('cred-warning').style.display = 'none';
+  document.getElementById('cred-warn-overlay').classList.remove('show');
   document.getElementById('name-input').value = '';
-  document.getElementById('topbar').querySelector('h1').textContent = '⚠ Dåliga Nyheter';
-  state.gameStarted = false;
-  state.followers = 500;
-  state.credibility = 70;
-  state.badges = [false, false, false, false, false, false];
+  S.inGame = false;
+  S.followers = 500;
+  S.cred = 70;
+  S.badges = [false,false,false,false,false,false];
   updateUI();
-  showScreen('screen-intro');
+  showIntro();
 }
 
-// ══════════════════════════════════════════════
-//  CHEAT FUNCTIONS
-// ══════════════════════════════════════════════
+function showAbout() {
+  alert('Dåliga Nyheter är ett pedagogiskt spel baserat på inokulationsteorin.\n\nGenom att spela rollen som desinformatör lär du dig känna igen de sex vanligaste teknikerna som används för att sprida falska nyheter:\n\n• Imitering\n• Känsloskapande\n• Polarisering\n• Konspirationsteorier\n• Diskreditering\n• Trollning\n\nKunskap om dessa tekniker gör dig mer motståndskraftig mot desinformation.');
+}
 
-function toggleCheatMenu() {
+// ═══════════════════════════════════════════════
+//  CHEAT FUNCTIONS
+// ═══════════════════════════════════════════════
+function toggleCheat() {
   document.getElementById('cheat-menu').classList.toggle('open');
 }
 
-function cheatMaxScore() {
-  if (!state.gameStarted) {
-    const nameVal = document.getElementById('name-input').value.trim();
-    if (nameVal) state.outletName = nameVal;
-    state.gameStarted = true;
-    document.getElementById('topbar').querySelector('h1').textContent = '⚠ ' + (state.outletName || 'DittNyhetsImperium');
+function ensureGameStarted() {
+  if (!S.inGame) {
+    const v = document.getElementById('name-input').value.trim();
+    if (v) S.name = v;
+    S.inGame = true;
+    showGameWrap();
   }
-  state.followers = 99500;
-  state.credibility = 95;
-  state.badges = [true, true, true, true, true, true];
-  updateUI();
-  toggleCheatMenu();
-  // flash all badges
-  MODULES.forEach((_, i) => {
-    setTimeout(() => showBadgeToast(i), i * 500);
-  });
-  setTimeout(showFinalScreen, MODULES.length * 500 + 800);
 }
 
-function cheatFollowers() {
-  state.followers += 50000;
+function cheatMaxScore() {
+  ensureGameStarted();
+  S.followers = 99500;
+  S.cred = 95;
+  S.badges = [true,true,true,true,true,true];
   updateUI();
-  toggleCheatMenu();
-  showToastMsg('📈', '+50 000 följare tillagda!');
+  document.getElementById('cheat-menu').classList.remove('open');
+  MODULES.forEach((_,i) => setTimeout(() => showBadgeToast(i), i*400));
+  setTimeout(showFinal, MODULES.length * 400 + 600);
 }
 
-function cheatCredibility() {
-  state.credibility = 100;
+function cheatAddFollowers() {
+  ensureGameStarted();
+  S.followers += 50000;
   updateUI();
-  toggleCheatMenu();
-  showToastMsg('✅', 'Full trovärdighet återställd!');
+  toggleCheat();
+  showGenericToast('+50 000 följare', 'Fusk-läge aktiverat');
+}
+
+function cheatFullCred() {
+  ensureGameStarted();
+  S.cred = 100;
+  updateUI();
+  toggleCheat();
+  showGenericToast('Full trovärdighet', '100% trovärdighet återställd');
 }
 
 function cheatAllBadges() {
-  state.badges = [true, true, true, true, true, true];
+  ensureGameStarted();
+  S.badges = [true,true,true,true,true,true];
   updateUI();
-  toggleCheatMenu();
-  showToastMsg('🎖️', 'Alla 6 märken upplåsta!');
+  toggleCheat();
+  showGenericToast('Alla 6 märken upplåsta', 'Fusk-läge aktiverat');
 }
 
-function cheatSkipToEnd() {
-  if (!state.gameStarted) {
-    const nameVal = document.getElementById('name-input').value.trim();
-    if (nameVal) state.outletName = nameVal;
-    state.gameStarted = true;
-    document.getElementById('topbar').querySelector('h1').textContent = '⚠ ' + (state.outletName || 'DittNyhetsImperium');
-  }
-  state.badges = [true, true, true, true, true, true];
-  state.followers = Math.max(state.followers, 5000);
+function cheatSkipEnd() {
+  ensureGameStarted();
+  S.badges = [true,true,true,true,true,true];
+  S.followers = Math.max(S.followers, 5000);
   updateUI();
-  toggleCheatMenu();
-  showFinalScreen();
+  toggleCheat();
+  showFinal();
 }
 
-function showToastMsg(icon, msg) {
-  const toast = document.getElementById('badge-toast');
-  document.getElementById('toast-icon').textContent = icon;
-  document.getElementById('toast-name').textContent = msg;
-  document.getElementById('toast-desc').textContent = 'Fusk-läge aktiverat';
-  toast.classList.add('show');
-  setTimeout(() => toast.classList.remove('show'), 2500);
-}
-
-// Close cheat menu on outside click
-document.addEventListener('click', (e) => {
+// close cheat on outside click
+document.addEventListener('click', e => {
   const panel = document.getElementById('cheat-panel');
   if (!panel.contains(e.target)) {
     document.getElementById('cheat-menu').classList.remove('open');
   }
 });
 
-// Init
+// init
 updateUI();
+showIntro();
 </script>
 </body>
 </html>
