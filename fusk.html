@@ -7,38 +7,49 @@
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body { font-family: 'Courier New', Courier, monospace; background: #ffff00; color: #000; min-height: 100vh; }
+
 .header { background: #000; color: #ffff00; padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; }
 .header-title { font-size: 1.1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 3px; }
 .header-back { font-size: 0.7rem; color: #ffff00; text-decoration: underline; letter-spacing: 2px; text-transform: uppercase; }
+
 .main { max-width: 680px; margin: 0 auto; padding: 36px 24px 60px; }
+
 h1 { font-size: 2rem; font-weight: 700; text-transform: uppercase; line-height: 1.1; margin-bottom: 6px; }
 .subtitle { font-size: 0.85rem; color: #444; margin-bottom: 32px; }
+
 .step { margin-bottom: 28px; }
 .step-num { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: #555; margin-bottom: 6px; }
 .step h2 { font-size: 1rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
-.step p { font-size: 0.88rem; line-height: 1.7; color: #222; margin-bottom: 10px; }
+.step p  { font-size: 0.88rem; line-height: 1.7; color: #222; margin-bottom: 10px; }
+
 .bm-wrap { background: #000; padding: 20px 24px; margin: 14px 0; display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
 .bm-label { font-size: 0.65rem; letter-spacing: 3px; text-transform: uppercase; color: #888; }
 .bm-link { display: inline-block; background: #ffff00; color: #000; font-family: 'Courier New', Courier, monospace; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 2px; padding: 12px 22px; text-decoration: none; cursor: grab; border: 3px dashed #000; user-select: none; transition: background 0.1s; }
 .bm-link:hover { background: #fff; }
 .bm-hint { font-size: 0.75rem; color: #888; font-style: italic; }
+
 .divider { border: none; border-top: 2px solid #000; margin: 28px 0; }
+
 .code-wrap { background: #111; color: #00ff88; padding: 18px 20px; font-size: 0.78rem; line-height: 1.6; overflow-x: auto; margin: 12px 0; position: relative; }
 .code-wrap pre { white-space: pre-wrap; word-break: break-all; }
 .copy-btn { position: absolute; top: 8px; right: 8px; background: #333; color: #fff; border: none; font-family: 'Courier New', Courier, monospace; font-size: 0.65rem; text-transform: uppercase; letter-spacing: 1px; padding: 5px 10px; cursor: pointer; transition: background 0.15s; }
 .copy-btn:hover { background: #ffff00; color: #000; }
+
 .does-list { list-style: none; display: flex; flex-direction: column; gap: 8px; margin: 10px 0; }
 .does-list li { background: #fff; border-left: 4px solid #000; padding: 10px 14px; font-size: 0.85rem; line-height: 1.5; }
 .does-list li strong { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 1px; color: #555; margin-bottom: 2px; }
+
 .warning { background: #ff0000; color: #fff; padding: 14px 18px; font-size: 0.8rem; line-height: 1.6; margin-top: 28px; }
 .warning strong { text-transform: uppercase; letter-spacing: 1px; }
 </style>
 </head>
 <body>
+
 <div class="header">
   <span class="header-title">⚡ Fusk-verktyg – Dåliga Nyheter</span>
   <a class="header-back" href="https://www.badnewsswedish.eu" target="_blank">Öppna spelet →</a>
 </div>
+
 <div class="main">
   <h1>Fuska på<br>Dåliga Nyheter</h1>
   <p class="subtitle">Bookmarklet + console-script som kör direkt på badnewsswedish.eu</p>
@@ -46,117 +57,174 @@ h1 { font-size: 2rem; font-weight: 700; text-transform: uppercase; line-height: 
   <div class="step">
     <div class="step-num">Steg 1 av 2 — enklaste sättet</div>
     <h2>Dra bookmarklet till bokmärkesfältet</h2>
-    <p>Dra knappen nedan till din webbläsares bokmärkeslängd. Gå sedan till <strong>badnewsswedish.eu</strong>, starta spelet och klicka bokmärket.</p>
+    <p>Dra knappen nedan till din webbläsares bokmärkesfält (eller högerklicka → "Lägg till bokmärke"). Gå sedan till <strong>badnewsswedish.eu</strong>, starta spelet och klicka bokmärket.</p>
+
     <div class="bm-wrap">
-      <span class="bm-label">Dra denna knapp till bokmärkeslängden</span>
-      <a class="bm-link" id="bm-link" href="#" title="Dåliga Nyheter – Fusk">⚡ FUSK – DÅLIGA NYHETER</a>
+      <span class="bm-label">Dra denna knapp till bokmärkesfältet</span>
+      <a class="bm-link" id="bm-link" href="BOOKMARKLET_PLACEHOLDER" title="Dåliga Nyheter – Fusk">⚡ FUSK – DÅLIGA NYHETER</a>
       <span class="bm-hint">← dra hit → [bokmärken] fältet längst upp i webbläsaren</span>
     </div>
-    <p>Om bokmärkeslängden inte syns: tryck <strong>Ctrl+Shift+B</strong> (Windows/Linux) eller <strong>Cmd+Shift+B</strong> (Mac).</p>
+
+    <p>Om bokmärkesfältet inte syns: tryck <strong>Ctrl+Shift+B</strong> (Windows/Linux) eller <strong>Cmd+Shift+B</strong> (Mac).</p>
   </div>
 
   <hr class="divider">
 
   <div class="step">
-    <div class="step-num">Steg 2 — alternativt</div>
+    <div class="step-num">Steg 2 — alternativt (om bookmarklet inte fungerar)</div>
     <h2>Kör direkt i webbläsarkonsolen</h2>
-    <p>Tryck <strong>F12</strong> på badnewsswedish.eu, välj fliken <strong>Console</strong>, klistra in koden nedan och tryck Enter.</p>
+    <p>Öppna <strong>badnewsswedish.eu</strong>, tryck <strong>F12</strong> (eller högerklicka → Inspektera), välj fliken <strong>Console</strong>, klistra in koden nedan och tryck Enter.</p>
+
     <div class="code-wrap">
       <button class="copy-btn" onclick="copyConsole()">KOPIERA</button>
-      <pre id="console-code">(function() {
+      <pre id="console-code">/* ===== DÅLIGA NYHETER – FUSK-SCRIPT ===== */
+(function() {
+
   var FOLLOWERS = 99500;
   var CRED = 95;
 
   function findReactState(el) {
-    var key = Object.keys(el).find(k => k.startsWith('__reactFiber') || k.startsWith('__reactInternalInstance'));
+    var key = Object.keys(el).find(k =>
+      k.startsWith('__reactFiber') || k.startsWith('__reactInternalInstance')
+    );
     return key ? el[key] : null;
   }
 
   function traverseFiber(fiber, depth) {
-    if (!fiber || depth > 30) return;
+    if (!fiber || depth > 30) return null;
     var s = fiber.memoizedState;
     while (s) {
-      if (s.queue && s.queue.dispatch) { try { s.queue.dispatch(FOLLOWERS); } catch(e) {} }
+      if (s.queue && s.queue.dispatch) {
+        try { s.queue.dispatch(FOLLOWERS); } catch(e) {}
+      }
       s = s.next;
     }
     traverseFiber(fiber.child, depth + 1);
     traverseFiber(fiber.sibling, depth + 1);
   }
 
-  try {
-    var els = document.querySelectorAll('[ng-controller],[data-ng-controller],[ng-app]');
-    els.forEach(function(el) {
+  function tryAngular() {
+    try {
+      var els = document.querySelectorAll('[ng-controller],[data-ng-controller],[ng-app]');
+      els.forEach(function(el) {
+        try {
+          var scope = window.angular.element(el).scope();
+          if (!scope) return;
+          if ('followers' in scope) scope.followers = FOLLOWERS;
+          if ('credibility' in scope) scope.credibility = CRED;
+          if ('score' in scope) scope.score = FOLLOWERS;
+          scope.$apply && scope.$apply();
+        } catch(e) {}
+      });
+    } catch(e) {}
+  }
+
+  function tryVue() {
+    var roots = ['#app','#game','main','[data-v-app]'];
+    roots.forEach(function(sel) {
+      var el = document.querySelector(sel);
+      if (!el) return;
+      var vue = el.__vue__ || el.__vue_app__;
+      if (vue) {
+        try {
+          var d = vue.$data || (vue._context && vue._context.app.config.globalProperties);
+          if (d) {
+            if ('followers' in d) d.followers = FOLLOWERS;
+            if ('credibility' in d) d.credibility = CRED;
+            if ('score' in d) d.score = FOLLOWERS;
+          }
+        } catch(e) {}
+      }
+    });
+  }
+
+  function tryGlobals() {
+    var names = ['game','gameState','state','store','vm','app','controller','GameState'];
+    names.forEach(function(n) {
       try {
-        var scope = window.angular.element(el).scope();
-        if (!scope) return;
-        if ('followers' in scope) scope.followers = FOLLOWERS;
-        if ('credibility' in scope) scope.credibility = CRED;
-        scope.$apply && scope.$apply();
+        var obj = window[n];
+        if (!obj) return;
+        if ('followers' in obj) obj.followers = FOLLOWERS;
+        if ('credibility' in obj) obj.credibility = CRED;
+        if ('score' in obj) obj.score = FOLLOWERS;
+        if (obj.setState) obj.setState({ followers: FOLLOWERS, credibility: CRED });
+        if (obj.commit) obj.commit('setFollowers', FOLLOWERS);
+        if (obj.dispatch) obj.dispatch('setFollowers', FOLLOWERS);
       } catch(e) {}
     });
-  } catch(e) {}
+  }
 
-  ['#app','#game','main'].forEach(function(sel) {
-    var el = document.querySelector(sel);
-    if (!el) return;
-    var vue = el.__vue__ || el.__vue_app__;
-    if (vue) {
-      try {
-        var d = vue.$data;
-        if (d && 'followers' in d) d.followers = FOLLOWERS;
-        if (d && 'credibility' in d) d.credibility = CRED;
-      } catch(e) {}
-    }
-  });
+  function domCheat() {
+    document.querySelectorAll('*').forEach(function(el) {
+      if (el.children.length > 0) return;
+      var txt = el.textContent.trim();
+      if (/^\d[\d\s.,]*$/.test(txt) && parseInt(txt.replace(/\D/g,'')) < 100000) {
+        el.textContent = FOLLOWERS.toLocaleString('sv-SE');
+      }
+    });
 
-  ['game','gameState','state','store','vm','app'].forEach(function(n) {
-    try {
-      var obj = window[n];
-      if (!obj) return;
-      if ('followers' in obj) obj.followers = FOLLOWERS;
-      if ('credibility' in obj) obj.credibility = CRED;
-      if (obj.setState) obj.setState({ followers: FOLLOWERS, credibility: CRED });
-      if (obj.commit) obj.commit('setFollowers', FOLLOWERS);
-    } catch(e) {}
-  });
+    document.querySelectorAll('[class*="badge"],[class*="Badge"],[class*="medal"],[class*="Medal"]').forEach(function(el) {
+      el.style.filter = 'none';
+      el.style.opacity = '1';
+      el.style.background = '#ff0000';
+    });
+
+    document.querySelectorAll('[class*="locked"],[class*="inactive"],[class*="disabled"],[class*="grayed"],[class*="earned"]').forEach(function(el) {
+      el.classList.remove('locked','inactive','disabled','grayed');
+      el.classList.add('earned','active');
+      el.style.filter = 'none';
+      el.style.opacity = '1';
+    });
+  }
+
+  tryAngular();
+  tryVue();
+  tryGlobals();
 
   document.querySelectorAll('[id],[class]').forEach(function(el) {
     var fiber = findReactState(el);
     if (fiber) traverseFiber(fiber, 0);
   });
 
-  document.querySelectorAll('*').forEach(function(el) {
-    if (el.children.length > 0) return;
-    var txt = el.textContent.trim();
-    if (/^\d[\d\s.,]*$/.test(txt) && parseInt(txt.replace(/\D/g,'')) < 100000) {
-      el.textContent = FOLLOWERS.toLocaleString('sv-SE');
-    }
-  });
-
-  document.querySelectorAll('[class*="badge"],[class*="Badge"],[class*="medal"]').forEach(function(el) {
-    el.style.filter = 'none'; el.style.opacity = '1'; el.style.background = '#ff0000';
-  });
-
-  document.querySelectorAll('[class*="locked"],[class*="inactive"],[class*="disabled"]').forEach(function(el) {
-    el.classList.remove('locked','inactive','disabled');
-    el.classList.add('earned','active');
-    el.style.filter = 'none'; el.style.opacity = '1';
-  });
+  domCheat();
 
   var existing = document.getElementById('__fusk_overlay__');
   if (existing) { existing.remove(); return; }
 
   var overlay = document.createElement('div');
   overlay.id = '__fusk_overlay__';
-  overlay.style.cssText = 'position:fixed;bottom:0;right:0;z-index:2147483647;pointer-events:none;display:flex;align-items:flex-end;justify-content:flex-end;padding:20px';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;z-index:2147483647;pointer-events:none;display:flex;align-items:flex-end;justify-content:flex-end;padding:20px';
 
   var panel = document.createElement('div');
   panel.style.cssText = 'pointer-events:all;background:#ffff00;color:#000;font-family:monospace;font-size:12px;padding:16px 20px;border:3px solid #000;min-width:220px;box-shadow:0 4px 20px rgba(0,0,0,0.3)';
-  panel.innerHTML = '<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:8px">FUSK AKTIVERAT</div><div style="font-size:28px;font-weight:700;line-height:1">' + FOLLOWERS.toLocaleString('sv-SE') + '</div><div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:12px">FÖLJARE</div><div style="background:#000;color:#fff;padding:8px 12px;margin-bottom:10px;display:flex;gap:12px;align-items:center"><span style="font-size:10px;letter-spacing:2px;text-transform:uppercase">TROVÄRDIGHET</span><span style="font-weight:700">' + CRED + '%</span></div><div style="display:flex;gap:6px;margin-bottom:12px"><span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">🎭</span><span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">😱</span><span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">⚔️</span><span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">🔍</span><span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">🗑️</span><span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">👾</span></div><div style="display:flex;gap:6px"><button onclick="document.getElementById(\'__fusk_overlay__\').remove()" style="flex:1;background:#000;color:#fff;border:none;font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:8px;cursor:pointer">STÄNG</button><button onclick="(function(){var c=Array.from(document.querySelectorAll(\'button:not([disabled]),[class*=choice],[class*=option]\'));var v=c.filter(function(e){return e.offsetParent!==null&&e.textContent.trim().length>10;});if(v.length>1){var b=v.reduce(function(a,b){return b.textContent.length>a.textContent.length?b:a;});b.click();}})()" style="flex:1;background:#3333ff;color:#fff;border:none;font-family:monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;padding:8px;cursor:pointer">AUTO-SVAR</button></div>';
+
+  panel.innerHTML = [
+    '<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:8px">FUSK AKTIVERAT</div>',
+    '<div style="font-size:28px;font-weight:700;line-height:1">' + FOLLOWERS.toLocaleString('sv-SE') + '</div>',
+    '<div style="font-size:10px;letter-spacing:3px;text-transform:uppercase;color:#555;margin-bottom:12px">FÖLJARE</div>',
+    '<div style="background:#000;color:#fff;padding:8px 12px;margin-bottom:10px;display:flex;gap:12px;align-items:center">',
+    '  <span style="font-size:10px;letter-spacing:2px;text-transform:uppercase">TROVÄRDIGHET</span>',
+    '  <span style="font-weight:700">' + CRED + '%</span>',
+    '</div>',
+    '<div style="display:flex;gap:6px;margin-bottom:12px">',
+    '  <span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">🎭</span>',
+    '  <span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">😱</span>',
+    '  <span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">⚔️</span>',
+    '  <span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">🔍</span>',
+    '  <span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">🗑️</span>',
+    '  <span style="background:#f00;width:28px;height:28px;display:flex;align-items:center;justify-content:center">👾</span>',
+    '</div>',
+    '<div style="display:flex;gap:6px">',
+    '  <button onclick="(function(){var o=document.getElementById(\'__fusk_overlay__\');if(o)o.remove();})()">STÄNG</button>',
+    '  <button onclick="(function(){var choices=Array.from(document.querySelectorAll(\'button:not([disabled]),[class*=choice],[class*=option]\')).filter(function(e){return e.offsetParent!==null&&e.textContent.trim().length>10;});if(choices.length>1){var best=choices.reduce(function(a,b){return b.textContent.length>a.textContent.length?b:a;});best.click();}})()">AUTO-SVAR</button>',
+    '</div>'
+  ].join('');
 
   overlay.appendChild(panel);
   document.body.appendChild(overlay);
-  console.log('%c⚡ FUSK AKTIVERAT','background:#ffff00;color:#000;font-size:16px;font-weight:bold;padding:6px 14px');
+
+  console.log('%c⚡ FUSK AKTIVERAT', 'background:#ffff00;color:#000;font-size:16px;font-weight:bold;padding:6px 14px');
+
 })();</pre>
     </div>
   </div>
@@ -166,11 +234,11 @@ h1 { font-size: 2rem; font-weight: 700; text-transform: uppercase; line-height: 
   <div class="step">
     <h2>Vad gör scriptet?</h2>
     <ul class="does-list">
-      <li><strong>React / Angular / Vue</strong>Försöker hitta och modifiera spelets interna JavaScript-tillstånd direkt</li>
-      <li><strong>Globala variabler</strong>Söker igenom vanliga globala state-variabler (game, gameState, store…)</li>
+      <li><strong>React / Angular / Vue</strong>Försöker hitta och modifiera spelets interna JavaScript-tillstånd direkt (followers, credibility)</li>
+      <li><strong>Globala variabler</strong>Söker igenom vanliga globala state-variabler (game, gameState, store, vm…)</li>
       <li><strong>DOM-manipulation</strong>Ändrar synliga siffror på sidan och aktiverar låsta badge-element</li>
-      <li><strong>AUTO-SVAR</strong>Klicka "AUTO-SVAR" i panelen för att automatiskt välja det längsta/mest aggressiva svaret</li>
-      <li><strong>Overlay-panel</strong>Visar panel med 99 500 följare, 95% trovärdighet och alla 6 märken</li>
+      <li><strong>Auto-svar</strong>Klicka "AUTO-SVAR" i panelen för att automatiskt välja det längsta svaret i varje fråga</li>
+      <li><strong>Overlay-panel</strong>Visar en panel med 99 500 följare, 95% trovärdighet och alla 6 märken</li>
     </ul>
   </div>
 
@@ -178,27 +246,55 @@ h1 { font-size: 2rem; font-weight: 700; text-transform: uppercase; line-height: 
 
   <div class="step">
     <h2>Steg-för-steg</h2>
-    <p><strong>Bookmarklet:</strong><br>1. Dra den gula knappen till bokmärkeslängden<br>2. Gå till badnewsswedish.eu<br>3. Starta spelet och kom till en fråga<br>4. Klicka bokmärket</p>
-    <p style="margin-top:14px"><strong>Console:</strong><br>1. Gå till badnewsswedish.eu<br>2. Tryck F12 → Console<br>3. Kopiera och klistra in koden<br>4. Tryck Enter</p>
+    <p><strong>Bookmarklet-metoden:</strong></p>
+    <p>1. Dra den gula knappen ovan till bokmärkesfältet<br>
+       2. Gå till <a href="https://www.badnewsswedish.eu" target="_blank">badnewsswedish.eu</a><br>
+       3. Starta spelet och kom till en fråga<br>
+       4. Klicka bokmärket – panelen dyker upp</p>
+    <p style="margin-top:14px"><strong>Console-metoden:</strong></p>
+    <p>1. Gå till <a href="https://www.badnewsswedish.eu" target="_blank">badnewsswedish.eu</a><br>
+       2. Tryck <strong>F12</strong> → välj fliken <strong>Console</strong><br>
+       3. Kopiera koden ovan och klistra in med Ctrl+V<br>
+       4. Tryck <strong>Enter</strong></p>
   </div>
 
-  <div class="warning"><strong>Obs:</strong> Spelets slutresultat kan skilja sig från det visade om poengräkning sker server-side. Använd AUTO-SVAR för att snabbt spela igenom frågorna med de bästa svaren.</div>
+  <div class="warning">
+    <strong>Observera:</strong> Spelet kan visa fusket i ditt slutresultat beroende på hur intern poängräkning fungerar. Använd "AUTO-SVAR" för att spela igenom frågorna snabbt.
+  </div>
 </div>
+
 <script>
-var code = document.getElementById('console-code').textContent;
-var mini = code.replace(/\/\*[\s\S]*?\*\//g,'').replace(/\/\/.*/g,'').replace(/\s+/g,' ').trim();
-document.getElementById('bm-link').href = 'javascript:' + encodeURIComponent(mini);
+var consoleScript = document.getElementById('console-code').textContent;
+var mini = consoleScript
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/\/\/.*/g, '')
+  .replace(/\s+/g, ' ')
+  .trim();
+
+var bookmarklet = 'javascript:' + encodeURIComponent('(function(){' + mini + '})();');
+document.getElementById('bm-link').href = bookmarklet;
+
 function copyConsole() {
-  var c = document.getElementById('console-code').textContent;
+  var code = document.getElementById('console-code').textContent;
   if (navigator.clipboard) {
-    navigator.clipboard.writeText(c).then(function() {
+    navigator.clipboard.writeText(code).then(function() {
       var btn = document.querySelector('.copy-btn');
-      btn.textContent = 'KOPIERAT!'; btn.style.background = '#00cc44'; btn.style.color = '#000';
-      setTimeout(function() { btn.textContent = 'KOPIERA'; btn.style.background = ''; btn.style.color = ''; }, 2000);
+      btn.textContent = 'KOPIERAT!';
+      btn.style.background = '#00cc44';
+      btn.style.color = '#000';
+      setTimeout(function() {
+        btn.textContent = 'KOPIERA';
+        btn.style.background = '';
+        btn.style.color = '';
+      }, 2000);
     });
   } else {
-    var ta = document.createElement('textarea'); ta.value = c;
-    document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+    var ta = document.createElement('textarea');
+    ta.value = code;
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
     alert('Kopierat!');
   }
 }
